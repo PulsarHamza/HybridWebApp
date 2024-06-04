@@ -1431,6 +1431,19 @@ async function incomingData(event){
         log(lang_map[78] + error);//log('Failed: ' + error);
       }
     }
+    async function test_connect() {
+      //const connectionType = 'serial';//document.getElementById('connectionTypeSelect').value;
+      //if (connectionType === 'serial') {
+        if (navigator.serial) {
+          alert('Connection through Serial and BT Possible.');
+        } else {
+          alert('Connection through BT possible only.');
+          //await connectToBluetooth();
+        }
+        // } else if (connectionType === 'bluetooth') {
+        //   await connectToBluetooth();
+        // }
+    }
 
       async function ble_connect() {
         isIgnore_2=0; isDisconnecting =0;  isTerminated=0;
@@ -2555,7 +2568,7 @@ function myLoadFunction() {
                     <table style="width:100%">
 
                       <tr>
-                        <td><button type="button" id="btnScan" class="button button-style1" onclick="ble_connect(); button_press = 1">DEVICE SCAN</button></td>
+                        <td><button type="button" id="btnScan" class="button button-style1" onclick="test_connect(); button_press = 1">DEVICE SCAN</button></td>
                         <td></td><td></td>
                         <td></td><td></td>
                         <td></td><td></td>
