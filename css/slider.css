@@ -1,0 +1,87 @@
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
+
+
+
+
+.slidecontainer {
+    width: 100%;
+    height: 50px;
+    margin-left: -5px;
+    border-width: 15px;
+    margin-top: -5px;
+    background: #9B9CA0;
+
+  }
+  
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 40px;
+    background: 
+    linear-gradient(#9B9CA0, whitesmoke) padding-box, 
+    linear-gradient(#9B9CA0, #9B9CA0) border-box;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    
+  }
+  
+  .slider:hover {
+    opacity: 1;
+    background: #E4ECED;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 50px;
+    height: 50px;
+    background: #15BEF0;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+  }
