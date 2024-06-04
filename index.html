@@ -158,6 +158,9 @@ function sleep(ms) {
     var param_num = param_info.map(a => a.pnum);
     var param_val = param_info.map(a => a.pvalue);
 
+    //Test
+    let connectionType = 'bluetooth';
+
     // Resetting all the variables
     function reset_params() {
       button_press = 0;
@@ -1432,6 +1435,55 @@ async function incomingData(event){
       }
     }
 
+    async function test_connect() 
+    {
+      if (connectionType === 'serial')
+      {
+        if (navigator.serial)
+        {
+          await connectToSerialPort();
+        }
+        else
+        {
+          await ble_connect();
+        }
+      } 
+      else if (connectionType === 'bluetooth')
+      {
+        await ble_connect();
+      }
+    }
+    async function connectToSerialPort() 
+    {
+      try 
+      {
+        port = await navigator.serial.requestPort();
+        const baudRate = 115200; // Set baud rate to 115200
+        await port.open({ baudRate: baudRate });
+        console.log('Serial port connected successfully!');
+      } 
+      catch (err) 
+      {
+        console.error('Error connecting to serial port:', err);
+        alert('Error connecting to serial port. Please try again.');
+      }
+    }
+    function toggle_connection_type() 
+    {
+      if (connectionType === 'serial') 
+      {
+        connectionType = 'bluetooth';
+        document.getElementById('connectionImage').src = "img/Bluetooth.svg";
+      } 
+      else 
+      {
+        if (navigator.serial)
+        {
+          connectionType = 'serial';
+          document.getElementById('connectionImage').src = "img/USB.svg";
+        }
+      }
+    }
       async function ble_connect() {
         isIgnore_2=0; isDisconnecting =0;  isTerminated=0;
 
@@ -2122,7 +2174,33 @@ async function sendAT(cmd) {
       page_lang_switch();
         // console.log(lang_map[1]);      
     }
+    function getDeviceInfo() 
+    {
+      const userAgent = navigator.userAgent;
+      let os = 'Unknown OS';
+      if (userAgent.indexOf('Win') != -1) os = 'Windows';
+      if (userAgent.indexOf('Mac') != -1) os = 'MacOS';
+      if (userAgent.indexOf('X11') != -1) os = 'UNIX';
+      if (userAgent.indexOf('Linux') != -1) os = 'Linux';
+      const browser = navigator.userAgent;
+      const deviceInfo = `OS: ${os}, Browser: ${browser}`;
+      //document.getElementById('deviceInfo').value = deviceInfo;
+    }
 
+    function checkSerialSupport() 
+    {
+      if (!('serial' in navigator)) 
+      {
+        //document.getElementById("connectionImage").style.visibility = "hidden";
+        //alert('Web Serial API not supported in this browser. Please use a compatible browser. See https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API#browser_compatibility for more information.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() 
+    {
+      getDeviceInfo();
+      checkSerialSupport();
+    });
 </script>
 
 <script>
@@ -2484,7 +2562,10 @@ function myLoadFunction() {
           <td></td><td></td>
           <td></td><td></td>    
           <td></td><td></td>   
-          <td></td><td></td>
+          <td></td>
+          <td>
+            <img id="connectionImage" src="img/Bluetooth.svg" onclick="toggle_connection_type()" alt="Connection Type" width="100">
+          </td>
           <td></td><td></td>    
           <td></td><td></td>    
           <td></td><td></td>
@@ -2555,7 +2636,7 @@ function myLoadFunction() {
                     <table style="width:100%">
 
                       <tr>
-                        <td><button type="button" id="btnScan" class="button button-style1" onclick="ble_connect(); button_press = 1">DEVICE SCAN</button></td>
+                        <td><button type="button" id="btnScan" class="button button-style1" onclick="test_connect(); button_press = 1">DEVICE SCAN</button></td>
                         <td></td><td></td>
                         <td></td><td></td>
                         <td></td><td></td>
