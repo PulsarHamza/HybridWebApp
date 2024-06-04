@@ -1477,8 +1477,11 @@ async function incomingData(event){
       } 
       else 
       {
-        connectionType = 'serial';
-        document.getElementById('connectionImage').src = "img/USB.png";
+        if (navigator.serial)
+        {
+          connectionType = 'serial';
+          document.getElementById('connectionImage').src = "img/USB.png";
+        }
       }
     }
       async function ble_connect() {
@@ -2188,7 +2191,7 @@ async function sendAT(cmd) {
     {
       if (!('serial' in navigator)) 
       {
-        document.getElementById("connectionImage").style.visibility = "hidden";
+        //document.getElementById("connectionImage").style.visibility = "hidden";
         //alert('Web Serial API not supported in this browser. Please use a compatible browser. See https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API#browser_compatibility for more information.');
       }
     }
