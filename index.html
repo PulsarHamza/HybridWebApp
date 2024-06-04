@@ -1473,14 +1473,14 @@ async function incomingData(event){
       if (connectionType === 'serial') 
       {
         connectionType = 'bluetooth';
-        document.getElementById('connectionImage').src = "img/Bluetooth.png";
+        document.getElementById('connectionImage').src = "img/Bluetooth.svg";
       } 
       else 
       {
         if (navigator.serial)
         {
           connectionType = 'serial';
-          document.getElementById('connectionImage').src = "img/USB.png";
+          document.getElementById('connectionImage').src = "img/USB.svg";
         }
       }
     }
@@ -2564,7 +2564,7 @@ function myLoadFunction() {
           <td></td><td></td>   
           <td></td>
           <td>
-            <img id="connectionImage" src="img/Bluetooth.png" onclick="toggle_connection_type()" alt="Connection Type" width="100">
+            <img id="connectionImage" src="img/Bluetooth.svg" onclick="toggle_connection_type()" alt="Connection Type" width="100">
           </td>
           <td></td><td></td>    
           <td></td><td></td>    
