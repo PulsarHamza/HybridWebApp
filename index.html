@@ -160,6 +160,10 @@ function sleep(ms) {
 
     //Test
     let connectionType = 'bluetooth';
+    let receivedDataArray = [];
+    let receiveBufferHex = '';
+    let receiveBufferASCII='';
+    let receiveTimeout;
 
     // Resetting all the variables
     function reset_params() {
@@ -520,7 +524,15 @@ function sleep(ms) {
             clearTimeout(echo_tid);
             clearTimeout(datem_tid);
             clearTimeout(param_tid);
-            sendAT('SENDPART1');
+            if (connectionType == 'serial')
+            {
+              sendTX("SENDPART1");
+            }
+            else
+            {
+              sendAT('SENDPART1');
+            }
+
             document.getElementById("trace-message").innerHTML = lang_map[146];//"Querying P104. Please wait...";
             document.getElementById("home-message").innerHTML = lang_map[146];//"Querying P104. Please wait...";
             button_press = 16;
@@ -544,7 +556,14 @@ function sleep(ms) {
             clearTimeout(echo_tid);
             clearTimeout(datem_tid);
             clearTimeout(param_tid);
-            sendAT('SENDPART2');
+            if (connectionType == 'serial')
+            {
+              sendTX("SENDPART2");
+            }
+            else
+            {
+              sendAT('SENDPART2');
+            }
             document.getElementById("trace-message").innerHTML = lang_map[147];//"Querying P104. Please wait...";
             document.getElementById("home-message").innerHTML = lang_map[147];//"Querying P104. Please wait...";
             button_press = 17;
@@ -566,7 +585,14 @@ function sleep(ms) {
             clearTimeout(echo_tid);
             clearTimeout(datem_tid);
             clearTimeout(param_tid);
-            sendAT('SENDPART3');
+            if (connectionType == 'serial')
+            {
+              sendTX("SENDPART3");
+            }
+            else
+            {
+              sendAT('SENDPART3');
+            }
             document.getElementById("trace-message").innerHTML = lang_map[148];//"Querying P104. Please wait...";
             document.getElementById("home-message").innerHTML = lang_map[148];//"Querying P104. Please wait...";
             button_press = 18;
@@ -738,11 +764,24 @@ function sleep(ms) {
         log(lang_map[65]);//log('No device connected!');
       }
     }
+    function stringToArrayBuffer(str) {
+    const buf = new ArrayBuffer(str.length);
+    const bufView = new Uint8Array(buf);
+    for (let j = 0, strLen = str.length; j < strLen; j++) {
+      bufView[j] = str.charCodeAt(j);
+    }
+    return buf;
+  }
 
     function getVal(i) {
       //param_val[i] = parseInt(hexToFloat('0x' + ('00' + s.getUint8(4*i).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 1).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 2).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 3).toString(16)).slice(-2)));
       //return (param_val[i]);
-      return(hexToFloat('0x' + ('00' + s.getUint8(4*i).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 1).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 2).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 3).toString(16)).slice(-2)));
+      if (connectionType=='serial')
+      {
+        const arrayBuffer = stringToArrayBuffer(receiveBuffer);
+        s = new DataView(arrayBuffer);
+      }
+      console.log(hexToFloat('0x' + ('00' + s.getUint8(4*i).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 1).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 2).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 3).toString(16)).slice(-2)));
     }
 
     function param_verify(i) {
@@ -904,7 +943,8 @@ function sleep(ms) {
       {
         offset = 0;
         for (let i = 0; i < 60; i++) {
-            param_verify(i);          
+            getVal(i);
+            //param_verify(i);          
         }
         //console.log("Got Part1");
         param_set2_start();
@@ -1144,7 +1184,93 @@ function sleep(ms) {
         document.getElementById("btnp21").style.background = '#33B34A';   //PULSAR GREEN
       }
     }
+    async function listenRX() {
+  const reader = port.readable.getReader();
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) {
+        console.log('[readLoop] DONE');
+        break;
+      }
+      if (value) {
+        // Convert the received bytes to a hex string
+        const receivedHex = Array.from(value).map(byte => byte.toString(16).padStart(2, '0').toUpperCase()).join('');
+        receiveBufferHex += receivedHex;
+        // Clear any previous timeout
+        clearTimeout(receiveTimeout);
 
+        // Set a timeout to process data after 50 ms
+        receiveTimeout = setTimeout(() => {
+          // Convert the hex string to ASCII characters
+          receiveBufferASCII += receiveBufferHex.match(/.{1,2}/g).reduce((acc, char) => acc + String.fromCharCode(parseInt(char, 16)), "");
+
+          //process the accumulated data using the functions 
+          // Process the accumulated data
+          for (let i = 0; i < receiveBufferHex.length / 8; i++) {
+            getVal_test(i);
+          }
+          //console.log('[readLoop] Processed Data:', receiveBufferHex);
+
+          // Clear the buffers
+          receiveBufferHex = '';
+          receiveBufferASCII = '';
+        }, 50);
+      }
+    }
+  } catch (error) {
+    console.error('[readLoop] ERROR', error);
+    log('Error receiving data. Please check the connection and try again.\n');
+  } finally {
+    reader.releaseLock();
+  }
+}
+function hexToFloat_test(hex) {
+    var s = hex >> 31 ? -1 : 1;
+    var e = (hex >> 23) & 0xFF;
+    var result = (s * (hex & 0x7fffff | 0x800000) * 1.0 / Math.pow(2, 23) * Math.pow(2, (e - 127)));
+    // Round very low values to three decimal places
+    if (Math.abs(result) < 0.001) {
+        result = parseFloat(result.toFixed(3));
+    }
+    return result;
+}
+
+
+// Simulation of getVal function
+function getVal_test(i) {
+    if (connectionType === 'serial') {
+        // Convert hex string to array of bytes
+        const byteArray = receiveBufferHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
+        
+        // Extract four bytes at a time and convert to float
+        const startIndex = i * 4;
+        const hexValue = byteArray.slice(startIndex, startIndex + 4).map(byte => byte.toString(16).padStart(2, '0')).join('');
+        console.log(hexToFloat_test('0x' + hexValue));
+    }
+}
+
+
+    function processReceivedData()
+    {
+      if ((button_press == 10) || (button_press == 11) || (button_press == 16) || (button_press == 17) || (button_press == 18) || ((button_press == 8) && ((doc_value == "GET ECHO") || (doc_value == "GET DATEM") || (doc_value == "SENDPART1") || (doc_value == "SENDPART2") || (doc_value == "SENDPART3"))))
+      {
+        var hex = Uint8tohex(receiveBuffer);      
+      }
+      else
+      { 
+        var disp=0;
+        if((button_press >=20) && (button_press <=26) || (receiveBuffer.includes("/P")))
+          populate_params(receiveBuffer);
+          //alert(receiveBuffer+"st");
+            
+        if(receiveBuffer.includes("/P")) 
+        {
+          if(!((isTraceOn == 1) && ((receiveBuffer.includes("/P104")) || (receiveBuffer.includes("/P605")))))
+          log(" ← " + receiveBuffer.slice(receiveBuffer.lastIndexOf('/')) );//   alert(receiveBuffer.slice(receiveBuffer.lastIndexOf('/')));
+        }       
+      }
+    }
 
 // Incoming GATT notification was received
 async function incomingData(event){
@@ -1453,21 +1579,58 @@ async function incomingData(event){
         await ble_connect();
       }
     }
+
     async function connectToSerialPort() 
     {
       try 
       {
+        log('Requesting serial port connection...\n');
         port = await navigator.serial.requestPort();
         const baudRate = 115200; // Set baud rate to 115200
         await port.open({ baudRate: baudRate });
-        console.log('Serial port connected successfully!');
+        log('Serial port connected successfully!');
+        log('Ready to communicate!\n');
+        login_stage = 2;
+        button_press=3;   
+        setTimeout(trace_button_check, 3000);     
+        await listenRX();
       } 
       catch (err) 
       {
         console.error('Error connecting to serial port:', err);
-        alert('Error connecting to serial port. Please try again.');
+        log(err+'\n');
       }
     }
+    async function sendTX(stringToSend) 
+    {
+      try 
+      {
+        if (!port) 
+        {
+          log('Serial port is not connected.');
+          return;
+        }
+        const writer = port.writable.getWriter();
+        if (stringToSend !== "+++") 
+        {
+        stringToSend += '\r\n';
+        }
+        const data = new TextEncoder().encode(stringToSend);
+        await writer.write(data);
+        console.log('Data sent:', stringToSend);
+        writer.releaseLock();
+        if (stringToSend.trim() === "SENDPART1") 
+        {
+          receivedDataArray = [];
+        }
+      } 
+      catch (error) 
+      {
+      console.error('Error sending data:', error);
+      log('Error sending data. Please check the connection and try again.');
+      }
+    }
+
     function toggle_connection_type() 
     {
       if (connectionType === 'serial') 
@@ -2192,11 +2355,18 @@ async function sendAT(cmd) {
       if (!('serial' in navigator)) 
       {
         //document.getElementById("connectionImage").style.visibility = "hidden";
-        //alert('Web Serial API not supported in this browser. Please use a compatible browser. See https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API#browser_compatibility for more information.');
+        //document.getElementById("connectionImage").style.visibility = "hidden";
+        //var tab = document.querySelector('.accordion-item[data-actab-group="0"][data-actab-id="1"]');
+        //tab.style.display = 'none';
+        document.getElementById("connectionImage").style.cursor = "default"; //set the toggle button to be default cursor
+        document.getElementById("connectionImage").onmouseover = "default";
+        document.getElementById("connectionImage").onmouseleave = "default";
+        document.getElementById("connectionImage").title = "";
+        alert('Web Serial API not supported in this browser. Please use a compatible browser.');
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function() 
+    document.addEventListener('DOMContentLoaded', function() //this is what happens as soon as the page loads
     {
       getDeviceInfo();
       checkSerialSupport();
@@ -2551,23 +2721,27 @@ function myLoadFunction() {
               </div>
           </td>
           <td>      
-            <div class="my_text" id="id_title"  style="font-family:'Segoe UI SemiBold';  font-size: 36pt; font-weight:500; color: rgb(255, 255, 255); text-align: center;">
+            <div class="my_text" id="id_title"  style="cursor:default; font-family:'Segoe UI SemiBold';  font-size: 36pt; font-weight:500; color: rgb(255, 255, 255); text-align: center;">
               REFLECT
             </div>
             <script>
               document.getElementById("id_title").innerHTML = lang_map[0];
             </script>
-            <div class="my_text" id="device_title"  style="font-family:'Segoe UI SemiBold';  font-size: 36pt; font-weight:500; color: white; text-align: center;"></div>
+            <div class="my_text" id="device_title"  style="cursor:default; font-family:'Segoe UI SemiBold';  font-size: 36pt; font-weight:500; color: white; text-align: center;"></div>
           </td> 
           <td></td><td></td>
           <td></td><td></td>    
           <td></td><td></td>   
           <td></td>
           <td>
-            <img id="connectionImage" src="img/Bluetooth.svg" onclick="toggle_connection_type()" alt="Connection Type" width="100">
+            <img id="connectionImage" src="img/Bluetooth.svg" onclick="toggle_connection_type()" 
+            style="cursor:pointer; width:100px; transition:transform 0.3s, opacity 0.3s;" 
+            alt="Connection Type" title="Toggle connection type between Serial and Bluetooth" onmouseover="this.style.opacity=0.7; 
+            this.style.transform='scale(1.1)'" onmouseout="this.style.opacity=1; this.style.transform='scale(1)'">
           </td>
           <td></td><td></td>    
-          <td></td><td></td>    
+          <td></td>
+          <td></td>    
           <td></td><td></td>
           <td></td><td></td>    
           <td></td><td></td>
@@ -2869,8 +3043,8 @@ function myLoadFunction() {
               </td>                 
                 <!-- Offline mode -->
                 <script src="./js/chart.js"></script>
-                <script src="js/hammer.min.js"></script>
-                <script src="js/chartjs-plugin-zoom.min.js"></script>
+                <script src="./js/hammer.min.js"></script>
+                <script src="./js/chartjs-plugin-zoom.min.js"></script>
                 <script>
                 // X points/labels
                 var xdata = [];
