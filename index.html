@@ -164,6 +164,7 @@ function sleep(ms) {
     let receiveBufferHex = '';
     let receiveBufferASCII='';
     let receiveTimeout;
+    let CommandSent='';
 
     // Resetting all the variables
     function reset_params() {
@@ -438,7 +439,16 @@ function sleep(ms) {
         clearTimeout(param_set2_tid);
         clearTimeout(param_set3_tid);
         clearTimeout(param_tid);  
-        sendAT('GET ECHO');
+        if (connectionType == 'serial')
+        {
+          sendTX('GET ECHO');
+          CommandSent='GET ECHO';
+        }
+        else
+        {
+          sendAT('GET ECHO');
+          CommandSent='GET ECHO';
+        }
         document.getElementById("trace-message").innerHTML = lang_map[113];//"Acquiring ECHO data. Please wait...";
         document.getElementById("home-message").innerHTML = lang_map[113];//"Acquiring ECHO data. Please wait...";
         // alert("sendAT('GET ECHO') : 1");
@@ -461,7 +471,16 @@ function sleep(ms) {
             clearTimeout(param_set2_tid);
             clearTimeout(param_set3_tid);
             clearTimeout(param_tid);
-            sendAT('GET DATEM');
+            if (connectionType == 'serial')
+            {
+              sendTX('GET DATEM');
+              CommandSent='GET DATEM';
+            }
+            else
+            {
+              sendAT('GET DATEM');
+              CommandSent='GET DATEM';
+            }
             document.getElementById("trace-message").innerHTML = lang_map[114];//"Acquiring DATEM data. Please wait...";
             document.getElementById("home-message").innerHTML = lang_map[114];//"Acquiring DATEM data. Please wait...";
             button_press = 11;
@@ -527,10 +546,12 @@ function sleep(ms) {
             if (connectionType == 'serial')
             {
               sendTX("SENDPART1");
+              CommandSent='SENDPART1';
             }
             else
             {
               sendAT('SENDPART1');
+              CommandSent='SENDPART1';
             }
 
             document.getElementById("trace-message").innerHTML = lang_map[146];//"Querying P104. Please wait...";
@@ -559,10 +580,12 @@ function sleep(ms) {
             if (connectionType == 'serial')
             {
               sendTX("SENDPART2");
+              CommandSent='SENDPART2';
             }
             else
             {
               sendAT('SENDPART2');
+              CommandSent='SENDPART2';
             }
             document.getElementById("trace-message").innerHTML = lang_map[147];//"Querying P104. Please wait...";
             document.getElementById("home-message").innerHTML = lang_map[147];//"Querying P104. Please wait...";
@@ -588,10 +611,12 @@ function sleep(ms) {
             if (connectionType == 'serial')
             {
               sendTX("SENDPART3");
+              CommandSent='SENDPART3';
             }
             else
             {
               sendAT('SENDPART3');
+              CommandSent='SENDPART3';
             }
             document.getElementById("trace-message").innerHTML = lang_map[148];//"Querying P104. Please wait...";
             document.getElementById("home-message").innerHTML = lang_map[148];//"Querying P104. Please wait...";
@@ -776,12 +801,20 @@ function sleep(ms) {
     function getVal(i) {
       //param_val[i] = parseInt(hexToFloat('0x' + ('00' + s.getUint8(4*i).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 1).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 2).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 3).toString(16)).slice(-2)));
       //return (param_val[i]);
-      if (connectionType=='serial')
+      if (connectionType === 'serial') 
       {
-        const arrayBuffer = stringToArrayBuffer(receiveBuffer);
-        s = new DataView(arrayBuffer);
+        // Convert hex string to array of bytes
+        const byteArray = receiveBufferHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
+        
+        // Extract four bytes at a time and convert to float
+        const startIndex = i * 4;
+        const hexValue = byteArray.slice(startIndex, startIndex + 4).map(byte => byte.toString(16).padStart(2, '0')).join('');
+        return(hexToFloat('0x' + hexValue));
       }
-      console.log(hexToFloat('0x' + ('00' + s.getUint8(4*i).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 1).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 2).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 3).toString(16)).slice(-2)));
+      else if (connectionType === 'bluetooth')
+      {
+        return(hexToFloat('0x' + ('00' + s.getUint8(4*i).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 1).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 2).toString(16)).slice(-2) + ('00' + s.getUint8(4*i + 3).toString(16)).slice(-2)));
+      }
     }
 
     function param_verify(i) {
@@ -1074,7 +1107,8 @@ function sleep(ms) {
         textarea1.scrollTop = textarea.scrollHeight;
     }
 
-    function populate_params(string_val){
+    function populate_params(string_val)
+    {
       if(string_val.includes("/P241:")) {             
         document.getElementById('p241List').value = parseInt(string_val.slice(string_val.lastIndexOf(':') + 1)) + 1;
         param_query = 1;
@@ -1207,12 +1241,14 @@ function sleep(ms) {
 
           //process the accumulated data using the functions 
           // Process the accumulated data
-          for (let i = 0; i < receiveBufferHex.length / 8; i++) {
-            getVal_test(i);
-          }
+          //over here we will add the function to call to process the data
+          // for (let i = 0; i < receiveBufferHex.length / 8; i++) {
+          //   getVal_test(i);
+          // }
           //console.log('[readLoop] Processed Data:', receiveBufferHex);
 
           // Clear the buffers
+          processReceivedData();
           receiveBufferHex = '';
           receiveBufferASCII = '';
         }, 50);
@@ -1225,6 +1261,248 @@ function sleep(ms) {
     reader.releaseLock();
   }
 }
+
+// 4- HEX to ASCII conversion
+function hexToAscii(hexString) 
+{
+	return hexString.match(/.{1,2}/g).reduce((acc, char) => acc + String.fromCharCode(parseInt(char, 16)), "");
+}
+function processReceivedData()
+{
+  const doc_value = CommandSent;
+	if ((doc_value == "GET ECHO") || (doc_value == "GET DATEM") || (doc_value == "SENDPART1") || (doc_value == "SENDPART2") || (doc_value == "SENDPART3"))
+	{
+		var hex = interpretHex(receiveBufferHex);//create a test function for this to emulate how this is working as well, what will be the parameter here
+	}
+	else
+	{ 
+		//these checks are all ascii related and hence will use the ascii conversion of data
+		if(hexToAscii(receiveBufferHex).includes("/P"))
+		{
+			populate_params(hexToAscii(receiveBufferHex));
+		}
+		if(hexToAscii(receiveBufferHex).includes("/P")) 
+		{
+			if(!((isTraceOn == 1) && ((hexToAscii(receiveBufferHex).includes("/P104")) || (hexToAscii(receiveBufferHex).includes("/P605")))))
+			log(" ← " + hexToAscii(receiveBufferHex).slice(hexToAscii(receiveBufferHex).lastIndexOf('/')) );
+		}       
+	}
+}
+function hexToInt16(hex1, hex2) {
+    return (parseInt(hex1, 16) << 8) + parseInt(hex2, 16);
+}
+    // Function to convert unsigned int 8 bit format to hex and relevant functions within it
+    function interpretHex(incoming_data)
+    {
+      a = [];
+      s = incoming_data;     
+      var check;
+      var floatval;
+      const doc_value = CommandSent;
+      const byteArray = receiveBufferHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
+      for (let i = 0; i < byteArray.length; i++) {
+        check = byteArray[i];
+        if((i >= 46) && (i < 246) && (doc_value == "GET ECHO")) // Changed from (i >= 42) && (i < 242)
+        {
+          echo[i-46] = check*1000/255;  // Changed from echo[i-42]
+        }
+        else if((i >= 46) && (i < 246) && (doc_value == "GET DATEM"))  // Changed from (i >= 42) && (i < 242)
+        {
+          datem[i-46] = check*1000/255; // Changed from datem[i-42]
+        }
+        // a.push(s.getUint8(i));
+        a.push('0x' + check.toString(16).padStart(2, '0'));
+      }
+
+      if((((doc_value == "GET ECHO") || (doc_value == "GET DATEM")))) {
+        // Populate the dynamic variables
+        level_var = getVal(0);
+        distance_var = getVal(1);
+        volume_var = getVal(2);
+        compensated_var = getVal(3);
+        mA_output_var = getVal(4);
+        temperature_var = getVal(5);
+        gate_start = hexToInt16(receiveBufferHex.slice(48, 50), receiveBufferHex.slice(50, 52));
+        gate_stop = hexToInt16(receiveBufferHex.slice(52, 54), receiveBufferHex.slice(54, 56));
+        echo_var = hexToInt16(receiveBufferHex.slice(56, 58), receiveBufferHex.slice(58, 60));
+        noise_var = hexToInt16(receiveBufferHex.slice(60, 62), receiveBufferHex.slice(62, 64));
+        status_var = hexToInt16(receiveBufferHex.slice(64, 66), receiveBufferHex.slice(66, 68));
+
+        near_blanking_var = getVal(8);
+        far_blanking_var = getVal(9);
+        empty_distance = getVal(10);
+        compensated_var_m = convert_to_mtrs(compensated_var);
+        if(Math.round(compensated_var_m) == 24.0)
+        {
+          mode_var = 20.0;
+        }
+        else if(compensated_var_m.toFixed(1) == 9.6)
+        {
+          mode_var = 8.0;
+        }
+        else
+        {
+          mode_var = 40.0;
+        }
+        far_blanking_dist = empty_distance * (100.0 + far_blanking_var)/100.0;
+        near_blanking_var = convert_to_measurement_units(near_blanking_var);
+        far_blanking_dist = convert_to_measurement_units(far_blanking_dist);
+        empty_distance = convert_to_measurement_units(empty_distance);
+        mode_var = convert_to_measurement_units(mode_var);
+
+        var xdata = [];
+        xdata[0] = 0.00;
+        for (let i = 1; i <= 200; i++)
+        {
+          xdata[i] = Math.round((xdata[i - 1] + (compensated_var/200))*1000)/1000;
+        }
+        // Zooming out does not work if labels are numbers
+        for (let i = 0; i <= 200; i++)
+        {
+          xdata[i] = xdata[i].toString();
+        }
+        myChart.data.labels = xdata;
+        myChart.config.options.scales.x.title.text = p104_units;
+        myChart.update();
+      }
+      else if (doc_value == "SENDPART1")
+      {
+        offset = 0;
+        for (let i = 0; i < 60; i++) {
+            //getVal(i);
+            param_verify(i);          
+        }
+        //console.log("Got Part1");
+        param_set2_start();
+        param_set2_tid = setInterval(param_set2_start, 5000);
+      }
+      else if (doc_value == "SENDPART2")
+      {
+        offset = 1;
+        for (let i = 0; i < 60; i++) {
+            param_verify(i);          
+        }
+        //console.log("Got Part2");
+        param_set3_start();
+        param_set3_tid = setInterval(param_set3_start, 5000);
+      }
+      else if (doc_value == "SENDPART3")
+      {
+        offset = 2;
+        for (let i = 0; i < (param_info.length - offset*60); i++) {
+            param_verify(i);          
+        }
+        //console.log("Got Part3");
+        echo_start();
+      }
+      return a;
+    }
+    // Function to convert unsigned int 8 bit format to hex and relevant functions within it
+    function Uint8tohex_test(incoming_data)
+    {
+      a = [];
+      s = incoming_data;     
+      var check;
+      var floatval;
+      const doc_value = document.getElementById('cmd').value;
+      for (let i = 0; i < s.byteLength; i++) {
+        check = s.getUint8(i);
+        if((i >= 46) && (i < 246) && (((doc_value == "GET ECHO") && (button_press == 8)) || (button_press == 10))) // Changed from (i >= 42) && (i < 242)
+        {
+          echo[i-46] = check*1000/255;  // Changed from echo[i-42]
+        }
+        else if((i >= 46) && (i < 246) && (((doc_value == "GET DATEM") && (button_press == 8)) || (button_press == 11)))  // Changed from (i >= 42) && (i < 242)
+        {
+          datem[i-46] = check*1000/255; // Changed from datem[i-42]
+        }
+        // a.push(s.getUint8(i));
+        a.push('0x' + ('00' + s.getUint8(i).toString(16)).slice(-2));
+      }
+ 
+      
+      if((((doc_value == "GET ECHO") || (doc_value == "GET DATEM") && (button_press == 8)) || (button_press == 10) || (button_press == 11)) && (s.byteLength == 246)) {
+        // Populate the dynamic variables
+        level_var = hexToFloat('0x' + ('00' + s.getUint8(0).toString(16)).slice(-2) + ('00' + s.getUint8(1).toString(16)).slice(-2) + ('00' + s.getUint8(2).toString(16)).slice(-2) + ('00' + s.getUint8(3).toString(16)).slice(-2));
+        distance_var = hexToFloat('0x' + ('00' + s.getUint8(4).toString(16)).slice(-2) + ('00' + s.getUint8(5).toString(16)).slice(-2) + ('00' + s.getUint8(6).toString(16)).slice(-2) + ('00' + s.getUint8(7).toString(16)).slice(-2));
+        volume_var = hexToFloat('0x' + ('00' + s.getUint8(8).toString(16)).slice(-2) + ('00' + s.getUint8(9).toString(16)).slice(-2) + ('00' + s.getUint8(10).toString(16)).slice(-2) + ('00' + s.getUint8(11).toString(16)).slice(-2));
+        compensated_var = hexToFloat('0x' + ('00' + s.getUint8(12).toString(16)).slice(-2) + ('00' + s.getUint8(13).toString(16)).slice(-2) + ('00' + s.getUint8(14).toString(16)).slice(-2) + ('00' + s.getUint8(15).toString(16)).slice(-2));
+        mA_output_var = hexToFloat('0x' + ('00' + s.getUint8(16).toString(16)).slice(-2) + ('00' + s.getUint8(17).toString(16)).slice(-2) + ('00' + s.getUint8(18).toString(16)).slice(-2) + ('00' + s.getUint8(19).toString(16)).slice(-2));
+        temperature_var = hexToFloat('0x' + ('00' + s.getUint8(20).toString(16)).slice(-2) + ('00' + s.getUint8(21).toString(16)).slice(-2) + ('00' + s.getUint8(22).toString(16)).slice(-2) + ('00' + s.getUint8(23).toString(16)).slice(-2));
+        gate_start = s.getUint8(24)*256 + s.getUint8(25); //s.getUint8(32)*256 + s.getUint8(33);
+        gate_stop = s.getUint8(26)*256 + s.getUint8(27);  //s.getUint8(34)*256 + s.getUint8(35);
+        echo_var = s.getUint8(28)*256 + s.getUint8(29);   //s.getUint8(36)*256 + s.getUint8(37);
+        noise_var = s.getUint8(30)*256 + s.getUint8(31);  //s.getUint8(38)*256 + s.getUint8(39);
+        status_var = s.getUint8(32)*256 + s.getUint8(33); //s.getUint8(40)*256 + s.getUint8(41);
+
+        near_blanking_var = hexToFloat('0x' + ('00' + s.getUint8(34).toString(16)).slice(-2) + ('00' + s.getUint8(35).toString(16)).slice(-2) + ('00' + s.getUint8(36).toString(16)).slice(-2) + ('00' + s.getUint8(37).toString(16)).slice(-2)); //hexToFloat('0x' + ('00' + s.getUint8(42).toString(16)).slice(-2) + ('00' + s.getUint8(43).toString(16)).slice(-2) + ('00' + s.getUint8(44).toString(16)).slice(-2) + ('00' + s.getUint8(45).toString(16)).slice(-2));
+        far_blanking_var = hexToFloat('0x' + ('00' + s.getUint8(38).toString(16)).slice(-2) + ('00' + s.getUint8(39).toString(16)).slice(-2) + ('00' + s.getUint8(40).toString(16)).slice(-2) + ('00' + s.getUint8(41).toString(16)).slice(-2));  //hexToFloat('0x' + ('00' + s.getUint8(46).toString(16)).slice(-2) + ('00' + s.getUint8(47).toString(16)).slice(-2) + ('00' + s.getUint8(48).toString(16)).slice(-2) + ('00' + s.getUint8(49).toString(16)).slice(-2));  
+        empty_distance = hexToFloat('0x' + ('00' + s.getUint8(42).toString(16)).slice(-2) + ('00' + s.getUint8(43).toString(16)).slice(-2) + ('00' + s.getUint8(44).toString(16)).slice(-2) + ('00' + s.getUint8(45).toString(16)).slice(-2));    //hexToFloat('0x' + ('00' + s.getUint8(50).toString(16)).slice(-2) + ('00' + s.getUint8(51).toString(16)).slice(-2) + ('00' + s.getUint8(52).toString(16)).slice(-2) + ('00' + s.getUint8(53).toString(16)).slice(-2));
+        compensated_var_m = convert_to_mtrs(compensated_var);
+        if(Math.round(compensated_var_m) == 24.0)
+        {
+          mode_var = 20.0;
+        }
+        else if(compensated_var_m.toFixed(1) == 9.6)
+        {
+          mode_var = 8.0;
+        }
+        else
+        {
+          mode_var = 40.0;
+        }
+        far_blanking_dist = empty_distance * (100.0 + far_blanking_var)/100.0;
+        near_blanking_var = convert_to_measurement_units(near_blanking_var);
+        far_blanking_dist = convert_to_measurement_units(far_blanking_dist);
+        empty_distance = convert_to_measurement_units(empty_distance);
+        mode_var = convert_to_measurement_units(mode_var);
+
+        var xdata = [];
+        xdata[0] = 0.00;
+        for (let i = 1; i <= 200; i++)
+        {
+          xdata[i] = Math.round((xdata[i - 1] + (compensated_var/200))*1000)/1000;
+        }
+        // Zooming out does not work if labels are numbers
+        for (let i = 0; i <= 200; i++)
+        {
+          xdata[i] = xdata[i].toString();
+        }
+        myChart.data.labels = xdata;
+        myChart.config.options.scales.x.title.text = p104_units;
+        myChart.update();
+      }
+      else if (((doc_value == "SENDPART1") && (button_press == 8)) || (button_press == 16))
+      {
+        offset = 0;
+        for (let i = 0; i < 60; i++) {
+            param_verify(i);
+            //param_verify(i);          
+        }
+        //console.log("Got Part1");
+        param_set2_start();
+        param_set2_tid = setInterval(param_set2_start, 5000);
+      }
+      else if (((doc_value == "SENDPART2") && (button_press == 8)) || (button_press == 17))
+      {
+        offset = 1;
+        for (let i = 0; i < 60; i++) {
+            param_verify(i);          
+        }
+        //console.log("Got Part2");
+        param_set3_start();
+        param_set3_tid = setInterval(param_set3_start, 5000);
+      }
+      else if (((doc_value == "SENDPART3") && (button_press == 8)) || (button_press == 18))
+      {
+        offset = 2;
+        for (let i = 0; i < (param_info.length - offset*60); i++) {
+            param_verify(i);          
+        }
+        //console.log("Got Part3");
+        echo_start();
+      }
+      return a;
+    }
 function hexToFloat_test(hex) {
     var s = hex >> 31 ? -1 : 1;
     var e = (hex >> 23) & 0xFF;
@@ -1248,30 +1526,8 @@ function getVal_test(i) {
         const hexValue = byteArray.slice(startIndex, startIndex + 4).map(byte => byte.toString(16).padStart(2, '0')).join('');
         console.log(hexToFloat_test('0x' + hexValue));
     }
+    //else continue as it is, for the BT mode
 }
-
-
-    function processReceivedData()
-    {
-      if ((button_press == 10) || (button_press == 11) || (button_press == 16) || (button_press == 17) || (button_press == 18) || ((button_press == 8) && ((doc_value == "GET ECHO") || (doc_value == "GET DATEM") || (doc_value == "SENDPART1") || (doc_value == "SENDPART2") || (doc_value == "SENDPART3"))))
-      {
-        var hex = Uint8tohex(receiveBuffer);      
-      }
-      else
-      { 
-        var disp=0;
-        if((button_press >=20) && (button_press <=26) || (receiveBuffer.includes("/P")))
-          populate_params(receiveBuffer);
-          //alert(receiveBuffer+"st");
-            
-        if(receiveBuffer.includes("/P")) 
-        {
-          if(!((isTraceOn == 1) && ((receiveBuffer.includes("/P104")) || (receiveBuffer.includes("/P605")))))
-          log(" ← " + receiveBuffer.slice(receiveBuffer.lastIndexOf('/')) );//   alert(receiveBuffer.slice(receiveBuffer.lastIndexOf('/')));
-        }       
-      }
-    }
-
 // Incoming GATT notification was received
 async function incomingData(event){
       // Read data from BLE CodeLess peer
@@ -1619,10 +1875,6 @@ async function incomingData(event){
         await writer.write(data);
         console.log('Data sent:', stringToSend);
         writer.releaseLock();
-        if (stringToSend.trim() === "SENDPART1") 
-        {
-          receivedDataArray = [];
-        }
       } 
       catch (error) 
       {
@@ -1637,6 +1889,7 @@ async function incomingData(event){
       {
         connectionType = 'bluetooth';
         document.getElementById('connectionImage').src = "img/Bluetooth.svg";
+        
       } 
       else 
       {
