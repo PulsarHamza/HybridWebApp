@@ -344,8 +344,8 @@ var lang_array = [
         German: " → Sende Kommando. Bitte warten...",
     },
     {	//Index 84
-        English: "Click on 'Device scan' to scan",
-        German: "Klicke auf 'Suche Sensor' um zu scannen",
+        English: "After selecting connection mode using the toggle button, click on 'Device scan' to scan",
+        German: "Nach auswahl des verbindungsmodus mit der umschalttaste, Klicke auf 'Suche Sensor' um zu scannen",
     },
     {	//Index 85
         English: "Warning: Indicator (P241) is set to installation mode. Switch to Health mode (P241 = 7) after installation!",

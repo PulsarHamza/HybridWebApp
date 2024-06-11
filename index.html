@@ -1316,6 +1316,7 @@ function hexToInt16(hex1, hex2) {
 
       if((((doc_value == "GET ECHO") || (doc_value == "GET DATEM")))) {
         // Populate the dynamic variables
+        //these are wrong calculations
         level_var = getVal(0);
         distance_var = getVal(1);
         volume_var = getVal(2);
@@ -1328,9 +1329,9 @@ function hexToInt16(hex1, hex2) {
         noise_var = hexToInt16(receiveBufferHex.slice(60, 62), receiveBufferHex.slice(62, 64));
         status_var = hexToInt16(receiveBufferHex.slice(64, 66), receiveBufferHex.slice(66, 68));
 
-        near_blanking_var = getVal(8);
-        far_blanking_var = getVal(9);
-        empty_distance = getVal(10);
+        near_blanking_var = getVal(8.5);
+        far_blanking_var = getVal(9.5);
+        empty_distance = getVal(10.5);
         compensated_var_m = convert_to_mtrs(compensated_var);
         if(Math.round(compensated_var_m) == 24.0)
         {
@@ -1370,7 +1371,8 @@ function hexToInt16(hex1, hex2) {
         offset = 0;
         for (let i = 0; i < 60; i++) {
             //getVal(i);
-            param_verify(i);          
+            param_verify(i);   
+
         }
         //console.log("Got Part1");
         param_set2_start();
@@ -1591,7 +1593,7 @@ async function incomingData(event){
           closeForm();
           if(isDisconnecting == 0){
             log(lang_map[69]);//log(" ← Connected");
-
+            document.getElementById('connectionImage').src = "img/bluetooth-active.svg";
             var elements = document.querySelectorAll("button[type=button]");   
             for(var i = 0, len = elements.length; i < len; i++)
               document.getElementById(elements[i].id).style.background = '#33B34A';   //PULSAR GREEN
@@ -1846,6 +1848,7 @@ async function incomingData(event){
         await port.open({ baudRate: baudRate });
         log('Serial port connected successfully!');
         log('Ready to communicate!\n');
+        document.getElementById('connectionImage').src = "img/usb-connected.svg";
         login_stage = 2;
         button_press=3;   
         setTimeout(trace_button_check, 3000);     
@@ -1888,15 +1891,16 @@ async function incomingData(event){
       if (connectionType === 'serial') 
       {
         connectionType = 'bluetooth';
-        document.getElementById('connectionImage').src = "img/Bluetooth.svg";
-        
+        document.getElementById('connectionImage').src = "img/bluetooth-disabled.svg";
+        document.getElementById('bt_range').style.display = "block";
       } 
       else 
       {
         if (navigator.serial)
         {
           connectionType = 'serial';
-          document.getElementById('connectionImage').src = "img/USB.svg";
+          document.getElementById('connectionImage').src = "img/usb-disconnected.svg";
+          document.getElementById('bt_range').style.display = "none";
         }
       }
     }
@@ -2987,7 +2991,7 @@ function myLoadFunction() {
           <td></td><td></td>   
           <td></td>
           <td>
-            <img id="connectionImage" src="img/Bluetooth.svg" onclick="toggle_connection_type()" 
+            <img id="connectionImage" src="img/bluetooth-disabled.svg" onclick="toggle_connection_type()" 
             style="cursor:pointer; width:100px; transition:transform 0.3s, opacity 0.3s;" 
             alt="Connection Type" title="Toggle connection type between Serial and Bluetooth" onmouseover="this.style.opacity=0.7; 
             this.style.transform='scale(1.1)'" onmouseout="this.style.opacity=1; this.style.transform='scale(1)'">
