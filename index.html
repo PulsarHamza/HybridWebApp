@@ -165,6 +165,9 @@ function sleep(ms) {
     let receiveBufferASCII='';
     let receiveTimeout;
     let CommandSent='';
+    let commandboxsend =false;
+    let param_update_flag=false;
+  
 
     // Resetting all the variables
     function reset_params() {
@@ -372,49 +375,105 @@ function sleep(ms) {
           case 0:
             button_press = 19;
             document.getElementById("btnp241").style.background = '#FFCE34';   //PULSAR YELLOW
-            sendAT('/P241');
+            if (connectionType==='serial')
+            {
+              sendTX("/P241");
+            }
+            else
+            {
+              sendAT('/P241');
+            }
             document.getElementById("settings-message").innerHTML = lang_map[105];//"Querying P241. Please wait...";
             break;
           case 1:
             button_press = 20;
             document.getElementById("btnp100").style.background = '#FFCE34';   //PULSAR YELLOW
-            sendAT('/P100');
+            if (connectionType==='serial')
+            {
+              sendTX("/P100");
+            }
+            else
+            {
+              sendAT('/P100');
+            }
             document.getElementById("settings-message").innerHTML = lang_map[106];//"Querying P100. Please wait...";
             break;
           case 2:
             button_press = 21;
             document.getElementById("btnp104").style.background = '#FFCE34';   //PULSAR YELLOW
-            sendAT('/P104');
+            if (connectionType==='serial')
+            {
+              sendTX("/P104");
+            }
+            else
+            {
+              sendAT('/P104');
+            }
             document.getElementById("settings-message").innerHTML = lang_map[107];//"Querying P104. Please wait...";
             break;
           case 3:
             button_press = 22;
             document.getElementById("btnp105").style.background = '#FFCE34';   //PULSAR YELLOW
-            sendAT('/P105');
+            if (connectionType==='serial')
+            {
+              sendTX("/P105");
+            }
+            else
+            {
+              sendAT('/P105');
+            }
             document.getElementById("settings-message").innerHTML = lang_map[108];//"Querying P105. Please wait...";
             break;
           case 4:
             button_press = 23;
             document.getElementById("btnp106").style.background = '#FFCE34';   //PULSAR YELLOW
-            sendAT('/P106');
+            if (connectionType==='serial')
+            {
+              sendTX("/P106");
+            }
+            else
+            {
+              sendAT('/P106');
+            }
             document.getElementById("settings-message").innerHTML = lang_map[109];//"Querying P106. Please wait...";
             break;
           case 5:
             button_press = 24;
             document.getElementById("btnp808").style.background = '#FFCE34';   //PULSAR YELLOW
-            sendAT('/P808');
+            if (connectionType==='serial')
+            {
+              sendTX("/P808");
+            }
+            else
+            {
+              sendAT('/P808');
+            }
             document.getElementById("settings-message").innerHTML = lang_map[110];//"Querying P808. Please wait...";
             break;
           case 6:
             button_press = 25;
             document.getElementById("btnp605").style.background = '#FFCE34';   //PULSAR YELLOW
-            sendAT('/P605');
+            if (connectionType==='serial')
+            {
+              sendTX("/P605");
+            }
+            else
+            {
+              sendAT('/P605');
+            }
             document.getElementById("settings-message").innerHTML = lang_map[111];//"Querying P605. Please wait...";
             break;
           case 7:
             button_press = 26;
             document.getElementById("btnp21").style.background = '#FFCE34';   //PULSAR YELLOW
-            sendAT('/P21');
+            if (connectionType==='serial')
+            {
+              sendTX("/P21");
+            }
+            else
+            {
+              sendAT('/P21');
+            }
             document.getElementById("settings-message").innerHTML = lang_map[112];//"Querying P21. Please wait...";
             break;
           case 8:
@@ -500,7 +559,14 @@ function sleep(ms) {
             clearTimeout(echo_tid);
             clearTimeout(datem_tid);
             clearTimeout(param_tid);
-            sendAT('/P104');
+            if (connectionType==='serial')
+            {
+              sendTX("/P104");
+            }
+            else
+            {
+              sendAT('/P104');
+            }
             document.getElementById("trace-message").innerHTML = lang_map[107];//"Querying P104. Please wait...";
             document.getElementById("home-message").innerHTML = lang_map[107];//"Querying P104. Please wait...";
             button_press = 14;
@@ -520,7 +586,14 @@ function sleep(ms) {
             clearTimeout(echo_tid);
             clearTimeout(datem_tid);
             clearTimeout(param_tid);
-            sendAT('/P605');
+            if (connectionType==='serial')
+            {
+              sendTX("/P605");
+            }
+            else
+            {
+              sendAT('/P605');
+            }
             document.getElementById("trace-message").innerHTML = lang_map[111];//"Querying P605. Please wait...";
             document.getElementById("home-message").innerHTML = lang_map[111];//"Querying P605. Please wait...";
             button_press = 15;
@@ -781,7 +854,15 @@ function sleep(ms) {
           setTimeout(sendcommand, 2000);
           setTimeout(ptModeON1, 3000);
         } else{
-          sendAT(document.getElementById('cmd').value); 
+          if (connectionType==='serial')
+          {
+            sendTX(document.getElementById('cmd').value); 
+            commandboxsend=true;
+          }
+          else 
+          {
+            sendAT(document.getElementById('cmd').value); 
+          }
           button_press = 8;
         }
       }
@@ -902,17 +983,17 @@ function sleep(ms) {
     function Uint8tohex(incoming_data)
     {
       a = [];
-      s = incoming_data;     
+      s = incoming_data;   
       var check;
       var floatval;
-      const doc_value = document.getElementById('cmd').value;
+      const doc_value = CommandSent;//document.getElementById('cmd').value;
       for (let i = 0; i < s.byteLength; i++) {
         check = s.getUint8(i);
-        if((i >= 46) && (i < 246) && (((doc_value == "GET ECHO") && (button_press == 8)) || (button_press == 10))) // Changed from (i >= 42) && (i < 242)
+        if((i >= 46) && (i < 246) && (doc_value == "GET ECHO"))//(((doc_value == "GET ECHO") && (button_press == 8)) || (button_press == 10))) // Changed from (i >= 42) && (i < 242)
         {
           echo[i-46] = check*1000/255;  // Changed from echo[i-42]
         }
-        else if((i >= 46) && (i < 246) && (((doc_value == "GET DATEM") && (button_press == 8)) || (button_press == 11)))  // Changed from (i >= 42) && (i < 242)
+        else if((i >= 46) && (i < 246) && (doc_value == "GET DATEM"))//(((doc_value == "GET DATEM") && (button_press == 8)) || (button_press == 11)))  // Changed from (i >= 42) && (i < 242)
         {
           datem[i-46] = check*1000/255; // Changed from datem[i-42]
         }
@@ -921,7 +1002,7 @@ function sleep(ms) {
       }
  
       
-      if((((doc_value == "GET ECHO") || (doc_value == "GET DATEM") && (button_press == 8)) || (button_press == 10) || (button_press == 11)) && (s.byteLength == 246)) {
+      if((doc_value == "GET ECHO") || (doc_value == "GET DATEM") && (s.byteLength == 246)) {
         // Populate the dynamic variables
         level_var = hexToFloat('0x' + ('00' + s.getUint8(0).toString(16)).slice(-2) + ('00' + s.getUint8(1).toString(16)).slice(-2) + ('00' + s.getUint8(2).toString(16)).slice(-2) + ('00' + s.getUint8(3).toString(16)).slice(-2));
         distance_var = hexToFloat('0x' + ('00' + s.getUint8(4).toString(16)).slice(-2) + ('00' + s.getUint8(5).toString(16)).slice(-2) + ('00' + s.getUint8(6).toString(16)).slice(-2) + ('00' + s.getUint8(7).toString(16)).slice(-2));
@@ -972,18 +1053,18 @@ function sleep(ms) {
         myChart.config.options.scales.x.title.text = p104_units;
         myChart.update();
       }
-      else if (((doc_value == "SENDPART1") && (button_press == 8)) || (button_press == 16))
+else if (doc_value == "SENDPART1")//(((doc_value == "SENDPART1") && (button_press == 8)) || (button_press == 16))
       {
         offset = 0;
         for (let i = 0; i < 60; i++) {
-            getVal(i);
+            param_verify(i);
             //param_verify(i);          
         }
         //console.log("Got Part1");
         param_set2_start();
         param_set2_tid = setInterval(param_set2_start, 5000);
       }
-      else if (((doc_value == "SENDPART2") && (button_press == 8)) || (button_press == 17))
+      else if (doc_value == "SENDPART2")
       {
         offset = 1;
         for (let i = 0; i < 60; i++) {
@@ -993,7 +1074,7 @@ function sleep(ms) {
         param_set3_start();
         param_set3_tid = setInterval(param_set3_start, 5000);
       }
-      else if (((doc_value == "SENDPART3") && (button_press == 8)) || (button_press == 18))
+      else if (doc_value == "SENDPART3") 
       {
         offset = 2;
         for (let i = 0; i < (param_info.length - offset*60); i++) {
@@ -1134,21 +1215,7 @@ function sleep(ms) {
         p104_measurement_units();  // Update the measurement units to be displayed
         if((param_start_val == 0) || (param_tid == false))
           settings_msg_clear();
-        /*
-        if(isTraceOn == 1) {
-          //sendAT('/P605');
-          //clearTimeout(p104_tid);
-          clearTimeout(param_set1_tid);
-          clearTimeout(param_set2_tid);
-          clearTimeout(param_set3_tid);
-          clearTimeout(echo_tid);
-          clearTimeout(datem_tid);
-          clearTimeout(param_tid);
-          document.getElementById("trace-message").innerHTML = lang_map[111];//"Querying P605. Please wait...";
-          document.getElementById("home-message").innerHTML = lang_map[111];//"Querying P605. Please wait...";
-          p605_tid = setInterval(p605_start, 1000);//5000);
-          button_press = 14;
-        } else */if (p104_param_update == 1)
+        if (p104_param_update == 1)
           p104_update();
         param_query = 3;
         document.getElementById("btnp104").style.background = '#33B34A';   //PULSAR GREEN
@@ -1233,6 +1300,7 @@ function sleep(ms) {
         receiveBufferHex += receivedHex;
         // Clear any previous timeout
         clearTimeout(receiveTimeout);
+        clearTimeout(noResponseTimeout);
 
         // Set a timeout to process data after 50 ms
         receiveTimeout = setTimeout(() => {
@@ -1248,7 +1316,23 @@ function sleep(ms) {
           //console.log('[readLoop] Processed Data:', receiveBufferHex);
 
           // Clear the buffers
-          processReceivedData();
+          if (receiveBufferASCII.includes("success"))
+          {
+            log('Serial port connected successfully!');
+            log('Ready to communicate!\n');
+            document.getElementById('connectionImage').src = "img/usb-connected.svg";
+            var elements = document.querySelectorAll("button[type=button]");   
+            for(var i = 0, len = elements.length; i < len; i++)
+              document.getElementById(elements[i].id).style.background = '#33B34A';   //PULSAR GREEN
+            login_stage = 2;
+            button_press=3;   
+            setTimeout(trace_button_check, 1000); 
+          }
+          else
+          {
+            processReceivedData();
+          }
+
           receiveBufferHex = '';
           receiveBufferASCII = '';
         }, 50);
@@ -1270,22 +1354,27 @@ function hexToAscii(hexString)
 function processReceivedData()
 {
   const doc_value = CommandSent;
-	if ((doc_value == "GET ECHO") || (doc_value == "GET DATEM") || (doc_value == "SENDPART1") || (doc_value == "SENDPART2") || (doc_value == "SENDPART3"))
+	if (((doc_value == "GET ECHO") || (doc_value == "GET DATEM") || (doc_value == "SENDPART1") || (doc_value == "SENDPART2") || (doc_value == "SENDPART3")))
 	{
 		var hex = interpretHex(receiveBufferHex);//create a test function for this to emulate how this is working as well, what will be the parameter here
 	}
-	else
-	{ 
+  else{
 		//these checks are all ascii related and hence will use the ascii conversion of data
 		if(hexToAscii(receiveBufferHex).includes("/P"))
 		{
 			populate_params(hexToAscii(receiveBufferHex));
 		}
-		if(hexToAscii(receiveBufferHex).includes("/P")) 
+		if(hexToAscii(receiveBufferHex).includes("/P") || hexToAscii(receiveBufferHex).includes("/ACCESS")) 
 		{
 			if(!((isTraceOn == 1) && ((hexToAscii(receiveBufferHex).includes("/P104")) || (hexToAscii(receiveBufferHex).includes("/P605")))))
-			log(" ← " + hexToAscii(receiveBufferHex).slice(hexToAscii(receiveBufferHex).lastIndexOf('/')) );
-		}       
+      {
+        log(" ← " + hexToAscii(receiveBufferHex).slice(hexToAscii(receiveBufferHex).lastIndexOf('/')) );
+      }
+      else
+      {
+        log(" ← " + hexToAscii(receiveBufferHex));
+      }
+		}    
 	}
 }
 function hexToInt16(hex1, hex2) {
@@ -1536,7 +1625,7 @@ async function incomingData(event){
       let readInValue = await outboundChar.readValue();
       let decoder = new TextDecoder('utf-8');
       // var checkBox = document.getElementById("myCheck");
-      const doc_value = document.getElementById('cmd').value;
+      const doc_value = CommandSent;//document.getElementById('cmd').value;
       const string_check =  decoder.decode(readInValue).replace('\r','\r ← ').replace('\n','').replace('\0','');
       //alert("button_press="+button_press+" readInValue="+readInValue+"login_stage="+login_stage+" string_check="+string_check);
       //alert(login_stage + " " +isIgnore);
@@ -1564,7 +1653,7 @@ async function incomingData(event){
      
 
       //alert(string_check + "2");
-      if ((button_press == 10) || (button_press == 11) || (button_press == 16) || (button_press == 17) || (button_press == 18) || ((button_press == 8) && ((doc_value == "GET ECHO") || (doc_value == "GET DATEM") || (doc_value == "SENDPART1") || (doc_value == "SENDPART2") || (doc_value == "SENDPART3"))))
+      if (/*(button_press == 10) || (button_press == 11) || (button_press == 16) || (button_press == 17) || (button_press == 18) ||*/ (/*(button_press == 8) &&*/ ((doc_value == "GET ECHO") || (doc_value == "GET DATEM") || (doc_value == "SENDPART1") || (doc_value == "SENDPART2") || (doc_value == "SENDPART3"))))
       {
         var hex = Uint8tohex(readInValue);
         // if((button_press == 10) || ((button_press == 8) && (doc_value == "GET ECHO")))
@@ -1837,6 +1926,9 @@ async function incomingData(event){
         await ble_connect();
       }
     }
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
     async function connectToSerialPort() 
     {
@@ -1846,12 +1938,16 @@ async function incomingData(event){
         port = await navigator.serial.requestPort();
         const baudRate = 115200; // Set baud rate to 115200
         await port.open({ baudRate: baudRate });
-        log('Serial port connected successfully!');
-        log('Ready to communicate!\n');
-        document.getElementById('connectionImage').src = "img/usb-connected.svg";
-        login_stage = 2;
-        button_press=3;   
-        setTimeout(trace_button_check, 3000);     
+        await sendTX("");
+        await delay(2000); // Delay for 1 second 
+        log("Opening host tunnel through to Reflect...");
+        await sendTX("host tunnel"); 
+        await delay(2000); // Delay for 1 second
+        await sendTX("host tunnel"); 
+        noResponseTimeout = setTimeout(()=>{
+            log('Error: No response received after sending "host tunnel"');
+            //disconnect from serial port
+          },2000);
         await listenRX();
       } 
       catch (err) 
@@ -1874,6 +1970,18 @@ async function incomingData(event){
         {
         stringToSend += '\r\n';
         }
+        //change this to does not include so it does not show the appended strings
+        if (!stringToSend.includes("GET ECHO") &&
+            !stringToSend.includes("GET DATEM") &&
+            !stringToSend.includes("SENDPART1") &&
+            !stringToSend.includes("SENDPART2") &&
+            !stringToSend.includes("SENDPART3") &&
+            !stringToSend.includes("host tunnel")&& 
+            stringToSend != "\r\n" &&
+            !(isTraceOn == 1 && (stringToSend.includes("/P104") || stringToSend.includes("/P605")))) 
+            {
+              log(' → ' + stringToSend );
+            }
         const data = new TextEncoder().encode(stringToSend);
         await writer.write(data);
         console.log('Data sent:', stringToSend);
@@ -1942,6 +2050,7 @@ async function incomingData(event){
 
 // Send an AT command to the CodeLess BLE peer
 async function sendAT(cmd) {
+      CommandSent = cmd;
       if (cmd === 'AT+PWRLVL')
         cmd_sent = "AT+PWRLVL";
       else if (cmd.includes("AT+PWRLVL="))
@@ -2018,7 +2127,15 @@ async function sendAT(cmd) {
             setTimeout(sendcommand, 2000);
             setTimeout(ptModeON1, 3000);
           } else {
-            sendAT(document.getElementById("cmd").value);
+            if (connectionType==='serial')
+            {
+              sendTX(document.getElementById("cmd").value);
+              CommandSent="";
+            }
+            else
+            {
+              sendAT(document.getElementById("cmd").value);
+            }
             button_press = 8;
           }    
         }
@@ -2068,7 +2185,15 @@ async function sendAT(cmd) {
     }
 
     function sendcommand() {
-      sendAT(document.getElementById("cmd").value);
+      if (connectionType==='serial')
+      {
+        sendTX(document.getElementById("cmd").value);
+        CommandSent="";
+      }
+      else
+      {
+        sendAT(document.getElementById("cmd").value);
+      }
       button_press = 8;
     }
 
@@ -2253,13 +2378,29 @@ async function sendAT(cmd) {
             document.getElementById("btnp241").style.background = '#FFCE34';   //PULSAR YELLOW
             list_value = document.getElementById("p241List").value; // Checking list value rather than list selected index
             if(list_value == 0) {
+            if (connectionType==='serial')
+            {
+              sendTX("/P241");
+            }
+            else
+            {
               sendAT('/P241');
+            }
               document.getElementById("settings-message").innerHTML = lang_map[105];//"Querying P241. Please wait...";
+              CommandSent="";
             }
             else {              
               list_value--;
-              sendAT('/P241:'+ list_value.toString());
+              if (connectionType==='serial')
+              {
+                sendTX('/P241:'+ list_value.toString());
+              }
+              else
+              {
+                sendAT('/P241:'+ list_value.toString());
+              }
               document.getElementById("settings-message").innerHTML = lang_map[117];//"Updating P241. Please wait...";
+              CommandSent="";
             }    
             break;            
           case 20:
@@ -2267,13 +2408,28 @@ async function sendAT(cmd) {
             //if(document.getElementById("p100-box").value == "")
             list_value = document.getElementById("p100List").value;
             if(list_value == 0) {
-              sendAT('/P100');
+              if (connectionType==='serial')
+              {
+                sendTX('/P100');
+              }
+              else
+              {
+                sendAT('/P100');
+              }
               document.getElementById("settings-message").innerHTML = lang_map[106];//"Querying P100. Please wait...";
             }
             else {
               //sendAT('/P100:'+ document.getElementById("p100-box").value);
-              sendAT('/P100:'+ list_value.toString());
+              if (connectionType==='serial')
+              {
+                sendTX('/P100:'+ list_value.toString());
+              }
+              else
+              {
+                sendAT('/P100:'+ list_value.toString());
+              }
               document.getElementById("settings-message").innerHTML = lang_map[118];//"Updating P100. Please wait...";
+              CommandSent="";
             }      
             //document.getElementById("p100-box").value = "";
             break;
@@ -2282,13 +2438,28 @@ async function sendAT(cmd) {
             //if(document.getElementById("p104-box").value == "")
             list_value = document.getElementById("p104List").value;
             if(list_value == 0) {
-              sendAT('/P104');
+              if (connectionType==='serial')
+              {
+                sendTX('/P104');
+              }
+              else
+              {
+                sendAT('/P104');
+              }
               document.getElementById("settings-message").innerHTML = lang_map[107];//"Querying P104. Please wait...";
             }
             else {
               //sendAT('/P104:'+ document.getElementById("p104-box").value);
-              sendAT('/P104:'+ list_value.toString());
+              if (connectionType==='serial')
+              {
+                sendTX('/P104:'+ list_value.toString());
+              }
+              else
+              {
+                sendAT('/P104:'+ list_value.toString());
+              }
               document.getElementById("settings-message").innerHTML = lang_map[119];//"Updating P104. Please wait...";
+              CommandSent="";
               p104_param_update = 1;
             }
             //document.getElementById("p104-box").value = "";         
@@ -2296,24 +2467,54 @@ async function sendAT(cmd) {
           case 22:
             document.getElementById("btnp105").style.background = '#FFCE34';   //PULSAR YELLOW
             if(document.getElementById("p105-box").value == "") {
-              sendAT('/P105');
+              if (connectionType==='serial')
+              {
+                sendTX('/P105');
+              }
+              else
+              {
+                sendAT('/P105');
+              }
               document.getElementById("settings-message").innerHTML = lang_map[108];//"Querying P105. Please wait...";
             }
             else {
-              sendAT('/P105:'+ document.getElementById("p105-box").value);
+              if (connectionType==='serial')
+              {
+                sendTX('/P105:'+ document.getElementById("p105-box").value);
+              }
+              else
+              {
+                sendAT('/P105:'+ document.getElementById("p105-box").value);
+              }
               document.getElementById("settings-message").innerHTML = lang_map[120];//"Updating P105. Please wait...";
+              CommandSent="";
             }
             document.getElementById("p105-box").value = "";  
             break;
           case 23:
             document.getElementById("btnp106").style.background = '#FFCE34';   //PULSAR YELLOW
             if(document.getElementById("p106-box").value == "") {
-              sendAT('/P106');
+              if (connectionType==='serial')
+              {
+                sendTX('/P106');
+              }
+              else
+              {
+                sendAT('/P106');
+              }
               document.getElementById("settings-message").innerHTML = lang_map[109];//"Querying P106. Please wait...";
             }
             else {
-              sendAT('/P106:'+ document.getElementById("p106-box").value);  
+              if (connectionType==='serial')
+              {
+                sendTX('/P106:'+ document.getElementById("p106-box").value);  
+              }
+              else
+              {
+                sendAT('/P106:'+ document.getElementById("p106-box").value);  
+              }
               document.getElementById("settings-message").innerHTML = lang_map[121];//"Updating P106. Please wait...";
+              CommandSent="";
             }          
             document.getElementById("p106-box").value = "";
             break;
@@ -2322,13 +2523,28 @@ async function sendAT(cmd) {
             //if(document.getElementById("p808-box").value == "")
             list_value = document.getElementById("p808List").value;
             if(list_value == 0) {
-              sendAT('/P808');
+              if (connectionType==='serial')
+              {
+                sendTX('/P808');
+              }
+              else
+              {
+                sendAT('/P808');
+              }
               document.getElementById("settings-message").innerHTML = lang_map[110];//"Querying P808. Please wait...";
             }
             else {
               //sendAT('/P808:'+ document.getElementById("p808-box").value);
-              sendAT('/P808:'+ list_value.toString());
+              if (connectionType==='serial')
+              {
+                sendTX('/P808:'+ list_value.toString()); 
+              }
+              else
+              {
+                sendAT('/P808:'+ list_value.toString());
+              }
               document.getElementById("settings-message").innerHTML = lang_map[122];//"Updating P808. Please wait...";
+              CommandSent="";
             }
             //document.getElementById("p808-box").value = "";        
             break;
@@ -2337,26 +2553,56 @@ async function sendAT(cmd) {
             //if(document.getElementById("p605-box").value == "")
             list_value = document.getElementById("p605List").value;
             if(list_value == 0) {
-              sendAT('/P605');
+              if (connectionType==='serial')
+              {
+                sendTX('/P605');
+              }
+              else
+              {
+                sendAT('/P605');
+              }
               document.getElementById("settings-message").innerHTML = lang_map[111];//"Querying P605. Please wait...";
             }
             else {
               //sendAT('/P605:'+ document.getElementById("p605-box").value);
               list_value--;
-              sendAT('/P605:'+ list_value.toString());
+              if (connectionType==='serial')
+              {
+                sendTX('/P605:'+ list_value.toString()); 
+              }
+              else
+              {
+                sendAT('/P605:'+ list_value.toString());  
+              }
               document.getElementById("settings-message").innerHTML = lang_map[123];//"Updating P605. Please wait...";
+              CommandSent="";
             }
             //document.getElementById("p605-box").value = "";           
             break;                        
           case 26:
             document.getElementById("btnp21").style.background = '#FFCE34';   //PULSAR YELLOW
             if(document.getElementById("p21-box").value == "") {
-              sendAT('/P21');
+              if (connectionType==='serial')
+              {
+                sendTX('/P21');
+              }
+              else
+              {
+                sendAT('/P21');
+              }
               document.getElementById("settings-message").innerHTML = lang_map[112];//"Querying P21. Please wait...";
             }
             else {
-              sendAT('/P21:'+ document.getElementById("p21-box").value);
+              if (connectionType==='serial')
+              {
+                sendTX('/P21:'+ document.getElementById("p21-box").value);  
+              }
+              else
+              {
+                sendAT('/P21:'+ document.getElementById("p21-box").value);
+              }
               document.getElementById("settings-message").innerHTML = lang_map[124];//"Updating P21. Please wait...";
+              CommandSent="";
             }
             document.getElementById("p21-box").value = "";        
             break; 
