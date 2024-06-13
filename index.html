@@ -167,7 +167,7 @@ function sleep(ms) {
     let CommandSent='';
     let commandboxsend =false;
     let param_update_flag=false;
-  
+    let reader;
 
     // Resetting all the variables
     function reset_params() {
@@ -1285,8 +1285,29 @@ else if (doc_value == "SENDPART1")//(((doc_value == "SENDPART1") && (button_pres
         document.getElementById("btnp21").style.background = '#33B34A';   //PULSAR GREEN
       }
     }
+    function parseMetrics(uartOutput) {
+      const patterns = {
+      reflect: /REFLECT-E\((\d+)\),/,
+      fwversion: /fwversion\(([^)]+)\),/,
+      access: /access\((\d+)\),/
+};
+
+    const metrics = {};
+
+    for (const [key, pattern] of Object.entries(patterns)) {
+        const match = uartOutput.match(pattern);
+        if (match) {
+            metrics[key] = isNaN(match[1]) ? match[1].trim() : parseFloat(match[1]);
+        } else {
+            metrics[key] = null;
+        }
+    }
+
+    return metrics;
+}
+
     async function listenRX() {
-  const reader = port.readable.getReader();
+  reader = port.readable.getReader();
   try {
     while (true) {
       const { value, done } = await reader.read();
@@ -1306,7 +1327,6 @@ else if (doc_value == "SENDPART1")//(((doc_value == "SENDPART1") && (button_pres
         receiveTimeout = setTimeout(() => {
           // Convert the hex string to ASCII characters
           receiveBufferASCII += receiveBufferHex.match(/.{1,2}/g).reduce((acc, char) => acc + String.fromCharCode(parseInt(char, 16)), "");
-
           //process the accumulated data using the functions 
           // Process the accumulated data
           //over here we will add the function to call to process the data
@@ -1327,6 +1347,41 @@ else if (doc_value == "SENDPART1")//(((doc_value == "SENDPART1") && (button_pres
             login_stage = 2;
             button_press=3;   
             setTimeout(trace_button_check, 1000); 
+          }
+          if (receiveBufferASCII.includes("REFLECT-E"))
+          {
+            const metrics = parseMetrics(receiveBufferASCII);
+            console.log(metrics);
+            const reflecte_name = metrics[Object.keys(metrics)[0]];
+            const reflecte_fwversion= metrics[Object.keys(metrics)[1]];
+            const reflecte_access= metrics[Object.keys(metrics)[2]];
+            document.querySelector('.static_image img').src = "img/Picture1.png";
+            document.getElementById('id_title').textContent= "REFLECT-E";
+            document.getElementById('reflecte_devinfo-label').textContent = "REFLECT-E INFORMATION";
+            document.getElementById('device_title').innerHTML =reflecte_name;
+            document.getElementById('deviceInfo-box').innerText = "REFLECT-E: "+reflecte_name;
+            document.getElementById('reflecte_fwversion-box').innerText = "version "+reflecte_fwversion;
+            let access_string="";
+            switch (reflecte_access)
+            {
+                case 1:
+                  access_string="ACCESS: CUSTOMER";
+                break;
+                case 2:
+                  access_string="ACCESS: SERVICE";
+                break;
+                case 3:
+                  access_string="ACCESS: GOLDCARD";
+                break;
+                case 4:
+                  access_string="ACCESS: PRODUCTION";     
+                break;          
+                default:
+                  access_string="ACCESS: CUSTOMER"; 
+                break; 
+
+            }
+            document.getElementById('reflecte_access-box').innerText = access_string;
           }
           else
           {
@@ -1373,6 +1428,11 @@ function processReceivedData()
       else
       {
         log(" ← " + hexToAscii(receiveBufferHex));
+      }
+      if (hexToAscii(receiveBufferHex).includes("/ACCESS:"))
+      {
+        let afterColon = hexToAscii(receiveBufferHex).split(':')[1];
+        document.getElementById('reflecte_access-box').innerText = "ACCESS: " +afterColon;
       }
 		}    
 	}
@@ -1818,7 +1878,33 @@ async function incomingData(event){
         log(lang_map[65]);//log('No device connected!');
       }
     }
+    async function testDisconnect()
+    {
+      if (connectionType==='serial')
+      {
+        serialDisconnect();
+      }
+      else 
+      {
+        bleDisconnect();
+      }
+    }
+    async function serialDisconnect() {
+    if (reader) {
+        sendTX("+++");
+        await reader.cancel();
+        await reader.releaseLock();
+        reader = null;
+        console.log('Reader cancelled and released.');
+        reload_webpage();
+    }
 
+    if (port) {
+        await port.close();
+        port = null;
+        console.log('Serial port closed.');
+    }
+}
     async function bleDisconnect()
     {
       
@@ -1939,11 +2025,18 @@ async function incomingData(event){
         const baudRate = 115200; // Set baud rate to 115200
         await port.open({ baudRate: baudRate });
         await sendTX("");
-        await delay(2000); // Delay for 1 second 
+        await delay(1000); // Delay for 2 second 
+        //await sendTX("node show");
+        //await delay(2000); // Delay for 2 second 
+        //await sendTX("modem status");
+        //await delay(2000); // Delay for 2 second 
         log("Opening host tunnel through to Reflect...");
         await sendTX("host tunnel"); 
-        await delay(2000); // Delay for 1 second
+        await delay(1000); // Delay for 1 second
         await sendTX("host tunnel"); 
+        await delay(1000); // Delay for 1 second
+        await sendTX("/DEVINFO");
+        //await delay(1000); // Delay for 1 second
         noResponseTimeout = setTimeout(()=>{
             log('Error: No response received after sending "host tunnel"');
             //disconnect from serial port
@@ -1977,6 +2070,7 @@ async function incomingData(event){
             !stringToSend.includes("SENDPART2") &&
             !stringToSend.includes("SENDPART3") &&
             !stringToSend.includes("host tunnel")&& 
+            stringToSend !="+++" &&
             stringToSend != "\r\n" &&
             !(isTraceOn == 1 && (stringToSend.includes("/P104") || stringToSend.includes("/P605")))) 
             {
@@ -2000,7 +2094,9 @@ async function incomingData(event){
       {
         connectionType = 'bluetooth';
         document.getElementById('connectionImage').src = "img/bluetooth-disabled.svg";
+        //document.querySelector('.static_image img').src = "img/tank1.png";
         document.getElementById('bt_range').style.display = "block";
+        document.getElementById('reflecte_devinfo').style.display= "none";
       } 
       else 
       {
@@ -2008,7 +2104,9 @@ async function incomingData(event){
         {
           connectionType = 'serial';
           document.getElementById('connectionImage').src = "img/usb-disconnected.svg";
+          //document.querySelector('.static_image img').src = "img/Picture1.png";
           document.getElementById('bt_range').style.display = "none";
+          document.getElementById('reflecte_devinfo').style.display= "block";
         }
       }
     }
@@ -2873,6 +2971,7 @@ async function sendAT(cmd) {
     {
       getDeviceInfo();
       checkSerialSupport();
+      document.getElementById('reflecte_devinfo').style.display= "none";
     });
 </script>
 
@@ -3214,51 +3313,29 @@ function myLoadFunction() {
     else  // Default selection
       lang_map = lang_array.map(a => a.English);
   </script>
-    <table>
-      <tr style="width:100%">
-          <td>
-              <div class="logo">
-                <a href="" style="text-decoration:none;">
-                  <img src="./img/pulsarlogo.svg"  alt="Logo" onclick="bleExitPage();" style="width:360px;height:120px;border:none;text-decoration:none;color:#eeeeee00;">
-                </a>
-              </div>
-          </td>
-          <td>      
-            <div class="my_text" id="id_title"  style="cursor:default; font-family:'Segoe UI SemiBold';  font-size: 36pt; font-weight:500; color: rgb(255, 255, 255); text-align: center;">
-              REFLECT
-            </div>
-            <script>
-              document.getElementById("id_title").innerHTML = lang_map[0];
-            </script>
-            <div class="my_text" id="device_title"  style="cursor:default; font-family:'Segoe UI SemiBold';  font-size: 36pt; font-weight:500; color: white; text-align: center;"></div>
-          </td> 
-          <td></td><td></td>
-          <td></td><td></td>    
-          <td></td><td></td>   
-          <td></td>
-          <td>
-            <img id="connectionImage" src="img/bluetooth-disabled.svg" onclick="toggle_connection_type()" 
-            style="cursor:pointer; width:100px; transition:transform 0.3s, opacity 0.3s;" 
-            alt="Connection Type" title="Toggle connection type between Serial and Bluetooth" onmouseover="this.style.opacity=0.7; 
-            this.style.transform='scale(1.1)'" onmouseout="this.style.opacity=1; this.style.transform='scale(1)'">
-          </td>
-          <td></td><td></td>    
-          <td></td>
-          <td></td>    
-          <td></td><td></td>
-          <td></td><td></td>    
-          <td></td><td></td>
-          <td></td><td></td>
-          <td></td><td></td>
-          <!-- <td>
-             <div class="logo1">
-              <a href="" style="text-decoration:none;">
-                <img src="./img/Icon256Reflect_new.png"  alt="Logo" onclick="bleExit1Page();" style=" width: 160px;;height: 160px;;border:none;text-decoration:none;color:#eeeeee00;"> 
-              </a>
-            </div>
-          </td>         -->
-          </tr>
-      </table>            
+  <table style="width: 100%; table-layout: fixed;">
+    <tr>
+      <td style="text-align: left;">
+        <div class="logo">
+          <a href="#" style="text-decoration: none;">
+            <img src="./img/pulsarlogo.svg" alt="Logo" onclick="bleExitPage();" style="width: 330px; height: 120px; border: none; text-decoration: none; color: #eeeeee00;">
+          </a>
+        </div>
+      </td>
+      <td style="text-align: center;padding-left: 0px;">
+        <div id="id_title" style="font-family: 'Segoe UI SemiBold'; font-size: 36pt; font-weight: 500; color: rgb(255, 255, 255);">REFLECT</div>
+        <div id="device_title"  style="font-family: 'Segoe UI SemiBold'; font-size: 36pt; font-weight: 500; color: rgb(255, 255, 255);"></div>
+      </td>
+      <td style="text-align: right; padding-right: 120px;">
+        <img id="connectionImage" src="img/bluetooth-disabled.svg" alt="Connection Type"
+             title="Toggle connection type between Serial and Bluetooth"
+             onclick="toggle_connection_type()"
+             style="cursor: pointer; width: 100px; transition: transform 0.3s, opacity 0.3s;"
+             onmouseover="this.style.opacity=0.7; this.style.transform='scale(1.1)'"
+             onmouseout="this.style.opacity=1; this.style.transform='scale(1)'">
+      </td>
+    </tr>
+  </table>
     </section>
 
     
@@ -3323,7 +3400,7 @@ function myLoadFunction() {
                         <td></td><td></td>
                         <td></td><td></td>
                         <td></td>
-                        <td><button type="button" id="btnEnd" class="button button-style1" onclick="bleDisconnect();  button_press = 2">END SESSION</button></td>
+                        <td><button type="button" id="btnEnd" class="button button-style1" onclick="testDisconnect();  button_press = 2">END SESSION</button></td>
                       </tr>
                     </table>
 
@@ -3940,7 +4017,32 @@ function myLoadFunction() {
                 <td><button type="button" id="btnpWord" class="button" onclick="button_press = 29; bluetooth_param_check();">UPDATE</button></td>
               </tr>
             </table>
+          </div>
+            <!-- Introducing new element here-->
+
+            <div id="reflecte_devinfo" style="top:-40%;  left: -20%; width:68%; height:100%; border-style: solid; border-width: 5px; border-radius: 10px;  border-color: rgba(255, 255, 255, 0.952);" align="center">
+              <tr>
+                <td><label id="reflecte_devinfo-label" class="label_default" style="font-family:'Segoe UI Bold';  font-size: 24pt; font-weight: bold; height:50px; display: inline-block;">REFLECT INFORMATION</label></td>
+              </tr>
+              <table style="width:100%;">
+                <tr>
+                  <td><label id="deviceInfo" class="label_default" style="font-family:'Segoe UI SemiBold';  font-size: 24pt; font-weight: 500; width:180px; height:80px;">DEVICE INFO</label></td>
+                  <td><div id="deviceInfo-box" style="font-family:'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 609.25px; height:80px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"></div></td>
+                </tr>
+                <tr>
+                  <td><label id="reflecte_fwversion" class="label_default" style="font-family:'Segoe UI SemiBold';  font-size: 24pt; font-weight: 500; width:180px; height:80px;">FW VERSION</label></td>
+                  <td><div id="reflecte_fwversion-box" style="font-family:'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width:609.25px; height:80px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"></div></td>
+                </tr>
+                <tr>
+                  <td><label id="reflecte_access" class="label_default" style="font-family:'Segoe UI SemiBold';  font-size: 24pt; font-weight: 500; width:180px; height:80px;">FW ACCESS</label></td>
+                  <td><div id="reflecte_access-box" style="font-family:'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width:609.25px; height:80px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"></div></td>
+                </tr>
+              </table>
             </div>
+            
+
+            <!-- Introducing new element here-->
+            
 
         </h4> <!-- IMPORTANT : donot remove this tag-->
         
