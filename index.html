@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/style-lr.css">
   <link href="css/style.css" rel="stylesheet">
   <link href="css/slider.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
   <link href="css/element.css" rel="stylesheet">
@@ -159,7 +160,7 @@ function sleep(ms) {
     var param_val = param_info.map(a => a.pvalue);
 
     //Test
-    let connectionType = 'bluetooth';
+    let connectionType = "";
     let receivedDataArray = [];
     let receiveBufferHex = '';
     let receiveBufferASCII='';
@@ -168,6 +169,7 @@ function sleep(ms) {
     let commandboxsend =false;
     let param_update_flag=false;
     let reader;
+    
 
     // Resetting all the variables
     function reset_params() {
@@ -1435,6 +1437,10 @@ function processReceivedData()
         document.getElementById('reflecte_access-box').innerText = "ACCESS: " +afterColon;
       }
 		}    
+    if (hexToAscii(receiveBufferHex).includes("Restricted") || hexToAscii(receiveBufferHex).includes("Same") || hexToAscii(receiveBufferHex).includes("range") ||hexToAscii(receiveBufferHex).includes("Read-Only"))
+    {
+      log(" ← " + hexToAscii(receiveBufferHex));
+    }
 	}
 }
 function hexToInt16(hex1, hex2) {
@@ -1993,6 +1999,11 @@ async function incomingData(event){
         log(lang_map[78] + error);//log('Failed: ' + error);
       }
     }
+    function refreshUniteInfo()
+    {
+      // send +++ to put Unite into normal information mode
+      // 
+    }
 
     async function test_connect() 
     {
@@ -2036,7 +2047,7 @@ async function incomingData(event){
         await sendTX("host tunnel"); 
         await delay(1000); // Delay for 1 second
         await sendTX("/DEVINFO");
-        //await delay(1000); // Delay for 1 second
+        await delay(1000); // Delay for 1 second
         noResponseTimeout = setTimeout(()=>{
             log('Error: No response received after sending "host tunnel"');
             //disconnect from serial port
@@ -2088,6 +2099,7 @@ async function incomingData(event){
       }
     }
 
+    // Function to toggle connection type
     function toggle_connection_type() 
     {
       if (connectionType === 'serial') 
@@ -2097,6 +2109,8 @@ async function incomingData(event){
         //document.querySelector('.static_image img').src = "img/tank1.png";
         document.getElementById('bt_range').style.display = "block";
         document.getElementById('reflecte_devinfo').style.display= "none";
+        sendTX("+++");
+        reload_webpage();
       } 
       else 
       {
@@ -2107,8 +2121,12 @@ async function incomingData(event){
           //document.querySelector('.static_image img').src = "img/Picture1.png";
           document.getElementById('bt_range').style.display = "none";
           document.getElementById('reflecte_devinfo').style.display= "block";
+          reload_webpage();
         }
       }
+
+      // Save the updated connection type to local storage
+      localStorage.setItem('connectionType', connectionType);
     }
       async function ble_connect() {
         isIgnore_2=0; isDisconnecting =0;  isTerminated=0;
@@ -2969,9 +2987,26 @@ async function sendAT(cmd) {
 
     document.addEventListener('DOMContentLoaded', function() //this is what happens as soon as the page loads
     {
+      
       getDeviceInfo();
       checkSerialSupport();
-      document.getElementById('reflecte_devinfo').style.display= "none";
+      connectionType= localStorage.getItem('connectionType');
+      if (('serial' in navigator) && connectionType==='serial')
+      {
+        document.getElementById('connectionImage').src = "img/usb-disconnected.svg";
+        document.getElementById('connectionImage').style.display = "block";
+        document.getElementById('bt_range').style.display = "none";
+        document.getElementById('reflecte_devinfo').style.display= "block";
+      }
+      else
+      {
+        connectionType="bluetooth";
+        document.getElementById('connectionImage').src = "img/bluetooth-disabled.svg";
+        document.getElementById('connectionImage').style.display = "block";
+        document.getElementById('bt_range').style.display = "block";
+        document.getElementById('reflecte_devinfo').style.display= "none";
+      }
+      //document.getElementById('reflecte_devinfo').style.display= "none";
     });
 </script>
 
@@ -3323,14 +3358,14 @@ function myLoadFunction() {
         </div>
       </td>
       <td style="text-align: center;padding-left: 0px;">
-        <div id="id_title" style="font-family: 'Segoe UI SemiBold'; font-size: 36pt; font-weight: 500; color: rgb(255, 255, 255);">REFLECT</div>
+        <div id="id_title" style="font-family: 'Segoe UI SemiBold'; font-size: 36pt; font-weight: 500; color: rgb(255, 255, 255); cursor: default;">REFLECT</div>
         <div id="device_title"  style="font-family: 'Segoe UI SemiBold'; font-size: 36pt; font-weight: 500; color: rgb(255, 255, 255);"></div>
       </td>
-      <td style="text-align: right; padding-right: 120px;">
-        <img id="connectionImage" src="img/bluetooth-disabled.svg" alt="Connection Type"
+      <td style="text-align: right; padding-left: 100px;">
+        <img id="connectionImage" src="" alt="Connection Type"
              title="Toggle connection type between Serial and Bluetooth"
              onclick="toggle_connection_type()"
-             style="cursor: pointer; width: 100px; transition: transform 0.3s, opacity 0.3s;"
+             style="cursor: pointer; width: 100px; transition: transform 0.3s, opacity 0.3s; display: none;"
              onmouseover="this.style.opacity=0.7; this.style.transform='scale(1.1)'"
              onmouseout="this.style.opacity=1; this.style.transform='scale(1)'">
       </td>
@@ -3502,64 +3537,6 @@ function myLoadFunction() {
                   </tr>
                   </table>
                 </td>
-                <!-- <td>
-                  <table style="width:100%;">
-                    <tr>
-                      <td>
-                        <button type="button" id="btnSend" class="button" onclick="send_command();">
-                            SEND
-                        </button>
-                    </td>                          
-                    </tr>
-                    <tr> -->
-                      <!-- <table style="width:100%;"> -->
-                        <!-- <td style="position: center;">
-                          <button type="button" class="button button-style1" id="btn_trace1" onclick="button_press=10; trace_off();">TRACE OFF</button>
-                          <script>
-                            document.getElementById("btn_trace1").style.visibility="hidden";
-                          </script>
-                        </td>
-                        <td style="position: center;">
-                          <button type="center" class="button button-style1" id="btn_mode" visibility="hidden" onclick="button_press = 13; Normal_mode();">ADVANCED MODE</button>
-                          <script>
-                            document.getElementById("btn_mode").style.visibility="hidden";
-                          </script>
-                        </td> -->
-                        <!-- <td></td><td></td>
-                        <td></td><td></td>
-                        <td></td><td></td>     
-                        <td></td><td></td>
-                        <td></td><td></td>
-                        <td></td><td></td>  
-                        <td></td><td></td>
-                        <td></td><td></td>
-                        <td></td><td></td>  
-                        <td></td><td></td>
-                        <td></td><td></td>
-                        <td></td><td></td>  
-                        <td></td><td></td>
-                        <td></td><td></td>
-                        <td></td><td></td>  
-                        <td></td><td></td>
-                        <td></td><td></td>
-                        <td></td> -->
-                        <!-- <td><label id = "lang_select" class="label_default" style="font-family:'Segoe UI SemiBold';  font-size: 16pt; font-weight: 500; width:80px; height:80px;">LANGUAGE</label></td>
-                        <td><select name = "lang_select_dropdown" id = "lang_select_List" style="font-family:'Segoe UI SemiBold';  font-size: 16pt; font-weight: 500; width:250px; height:80px;" onchange="lang_switch(); setTimeout(lang_switch, 100);""> 
-                          <option value="0"> Choose Language </option>  
-                          <option value="1"> English </option>  
-                          <option value="2"> German </option> 
-                        </select>
-                        </td> -->
-                        <!-- <td>
-                          <button type="button" id="btnClear" class="button" onclick="clearlog(); button_press = 9">
-                            CLEAR
-                          </button>
-                        </td> -->
-                      <!-- </table>                       -->
-                    <!-- </tr>
-                  
-                  </table>
-                </td> -->
                 <script>
                   document.getElementById("btnScan").innerHTML = lang_map[4];
                   document.getElementById("btnEnd").innerHTML = lang_map[5];
@@ -3603,17 +3580,6 @@ function myLoadFunction() {
           </table>
         </div>
           <div class="accordion-item__container"> 
-          <!-- <table>
-            <tr>               
-                <td></td><td></td>
-                <td></td><td></td>
-                <td></td><td></td>                                 -->
-                 <!-- <td><button type="button" class="button button-style1" onclick="sendATL('AT+AUTH=123321');  button_press = 3">Test-Login</button></td> -->
-            <!-- </tr>                    
-          </table> -->
-
-          <!-- <p>reprehenderit temporibus, assumenda cupiditate consequatur soluta odit ex repudiandae delectus cumque, provident hic sed quod? Quis, nam. Similique eaque quae vel recusandae expedita qui sint fugiat, nisi assumenda et ex molestiae atque deleniti magni, ipsam libero!</p> -->
-           <!-- start of trace box --> 
           <table style="width:100%"> <!-- check here: start of the trace box -->
             <tr>
               <td>
@@ -4037,6 +4003,16 @@ function myLoadFunction() {
                   <td><label id="reflecte_access" class="label_default" style="font-family:'Segoe UI SemiBold';  font-size: 24pt; font-weight: 500; width:180px; height:80px;">FW ACCESS</label></td>
                   <td><div id="reflecte_access-box" style="font-family:'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width:609.25px; height:80px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"></div></td>
                 </tr>
+                <tr>
+                  <td><label id="unite_info" class="label_default" style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px;">UNITE INFO</label></td>
+                  <td>
+                    <div id="unite_info-box" style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 609.25px; height: 80px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px;">
+                      <a href="#" onclick="refreshUniteInfo()" style="text-decoration: none; background-color: #f37021; color: white; padding: 5px 15px; border-radius: 5px; display: flex; align-items: center;">
+                        <i class="fa fa-refresh" style="font-size: 36px; margin-right: 5px;"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
               </table>
             </div>
             
@@ -4230,7 +4206,7 @@ function myLoadFunction() {
             <p style="font-family:'Segoe UI Normal';  width: 115%; text-align:center; color:#ffffff; font-size:20pt;line-height:40px;">&copy; Pulsar Measurement 2024<br></p>
           </td>
           <td style=" text-align:center;font-size:24px;  background-color:rgb(51, 179, 74);;color:#2e2323;">
-            <p style="font-family:'Segoe UI Normal';  width: 0%; text-align:right; color:#ffffff; font-size:12pt;line-height:40px; font-style: italic;">v0.0.3<br></p>
+            <p style="font-family:'Segoe UI Normal';  width: 0%; text-align:right; color:#ffffff; font-size:12pt;line-height:40px; font-style: italic;"><v0 class="0.0.4b"></v0><br></p>
           </td>
         </tr>
       </table>
