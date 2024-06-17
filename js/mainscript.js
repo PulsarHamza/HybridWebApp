@@ -1,3 +1,17 @@
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("js/sw.js")
+    .then(function (registration) {
+      console.log("ServiceWorker registration successful with scope: ", registration.scope);
+    })
+    .catch(function (err) {
+      //registration failed :(
+      console.log("ServiceWorker registration failed: ", err);
+    });
+} else {
+  console.log("No service-worker on this browser");
+}
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
