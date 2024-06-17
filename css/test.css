@@ -1,0 +1,266 @@
+.my_text {
+  font-family: "Segoe UI SemiBold";
+  font-size: 40px;
+  font-weight: bold;
+  width: 83%;
+  padding: 5px 10px;
+}
+.button {
+  background-color: rgb(243, 112, 33);
+  border: none;
+  color: white;
+  height: 100px;
+  width: 268px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-family: "Segoe UI SemiBold";
+  font-size: 24pt;
+  font-weight: 500;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.textarea_c {
+  background-color: white;
+  border-color: #9b9ca0;
+  height: 270px;
+  width: 273;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-family: "Segoe UI SemiBold";
+  font-size: 24pt;
+  font-weight: 500;
+  margin: 4px 2px;
+  cursor: pointer;
+  resize: none;
+}
+.textarea1 {
+  background-color: white;
+  /* border: none; */
+  border-color: #9b9ca0;
+  /* color: white; */
+  /* padding: 10px 30px; */
+  height: 170px;
+  width: 273px;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-family: "Segoe UI SemiBold";
+  font-size: 24pt;
+  font-weight: 500;
+  margin: 4px 2px;
+  cursor: pointer;
+  resize: none;
+  left: 10px;
+}
+.textarea2 {
+  background-color: white;
+  /* border: none; */
+  border-color: #9b9ca0;
+  /* color: white; */
+  /* padding: 10px 30px; */
+  height: 170px;
+  width: 500px;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-family: "Segoe UI SemiBold";
+  font-size: 24pt;
+  font-weight: 500;
+  margin: 4px 2px;
+  cursor: pointer;
+  resize: none;
+  left: 10px;
+}
+.label_default {
+  color: black;
+}
+
+.container1 {
+  display: flex;
+}
+.fixed {
+  width: 200px;
+}
+.flex-item {
+  flex-grow: 1;
+}
+.blocks_textbox {
+  display: inline-block;
+  /* border: solid 2px red;    */
+  /* padding: 16px 20px; */
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  margin: 0 auto;
+  height: 50px;
+  width: 100px;
+  font-weight: bold;
+  font-size: medium;
+  color: rgb(0, 0, 0);
+  /* font-family: "verdana"; */
+  font-size: 4.5em;
+  overflow: scroll;
+  /*Hide content before animation*/
+  /* border-right: .1em solid white; */
+  /*Cursor*/
+  white-space: nowrap;
+  /*Keep text on same line*/
+  margin: 0 auto;
+  /*Scrolling effect while typing*/
+  letter-spacing: 0.1em;
+  animation: typing 3s steps(30, end), blink-caret 0.75s steps(1, end) infinite alternate;
+}
+
+.blocks {
+  display: inline-block;
+  /* border: solid 2px red;    */
+  /* padding: 16px 20px; */
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  margin: 0 auto;
+  /* height:50px; 
+    width: 100px; */
+  font-weight: bold;
+
+  color: rgb(0, 0, 0);
+  /* font-family: "verdana"; */
+  font-size: 3.5em;
+  overflow: hidden;
+  /*Hide content before animation*/
+  /* border-right: .1em solid white; */
+  /*Cursor*/
+  white-space: nowrap;
+  /*Keep text on same line*/
+  margin: 0 auto;
+  /*Scrolling effect while typing*/
+  letter-spacing: 0.1em;
+  animation: typing 3s steps(30, end), blink-caret 0.75s steps(1, end) infinite alternate;
+}
+.blocks_txtarea {
+  display: inline-block;
+  /* border: solid 2px red;    */
+  /* padding: 16px 20px; */
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  margin: 0 auto;
+  /* height:50px; 
+    width: 100px; */
+  font-weight: bold;
+  font-size: medium;
+  color: rgb(0, 0, 0);
+  /* font-family: "verdana"; */
+  font-size: 4.5em;
+  overflow: hidden;
+  /*Hide content before animation*/
+  /* border-right: .1em solid white; */
+  /*Cursor*/
+  white-space: nowrap;
+  /*Keep text on same line*/
+  margin: 0 auto;
+  /*Scrolling effect while typing*/
+  letter-spacing: 0.1em;
+  animation: typing 3s steps(30, end), blink-caret 0.75s steps(1, end) infinite alternate;
+}
+.wrap {
+  width: 210px;
+}
+
+/* Button used to open the contact form - fixed at the bottom of the page */
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 280px;
+}
+
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  /* position: fixed; */
+  position: relative;
+  right: 0px;
+  bottom: 0px;
+  top: 0px;
+  left: 0px;
+  width: 508px;
+  max-width: 600px;
+  border: 1px solid #03681cd0;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 600px;
+  width: 505px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+.form-container input[type="text"],
+.form-container input[type="password"] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* When the inputs get focus, do something */
+.form-container input[type="text"]:focus,
+.form-container input[type="password"]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/login button */
+.form-container .btn {
+  background-color: #04aa6d;
+  color: rgb(255, 255, 255);
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 50%;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: rgb(55, 85, 7);
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover,
+.open-button:hover {
+  opacity: 1;
+}
+
+/* Used in the label of Impromptu message */
+.emphasized {
+  font-size: 20pt;
+  color: red;
+  font-style: italic;
+  font-weight: normal;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px;
+}
