@@ -1,142 +1,111 @@
 <!DOCTYPE html>
 <!-- <html lang="en" manifest="cache.appcache"> -->
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Pulsar Bluetooth Remote Access</title>
-    <link rel="stylesheet" href="css/normalize.min.css" />
-    <noscript>
-      <link rel="stylesheet" href="css/skel-noscript.css" />
-      <link rel="stylesheet" href="css/style.css" />
-      <link rel="stylesheet" href="css/style-desktop.css" />
-    </noscript>
-    <link rel="stylesheet" href="css/style-lr.css" />
-    <link href="css/style.css" rel="stylesheet" />
-    <link href="css/slider.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="css/test.css" />
-    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
-    <link href="css/element.css" rel="stylesheet" />
-    <link href="css/jquery-impromptu.css" rel="stylesheet" />
-    <script src="js/jquery-2.1.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="./js/ekko-lightbox.js"></script>
-    <script src="js/slider.js"></script>
-    <script src="js/index.js" defer></script>
-    <script src="js/jquery-impromptu.js"></script>
-    <script src="js/lang.js"></script>
-    <script src="js/param.js"></script>
-    <script src="js/test.js" defer></script>
-    <link rel="icon" type="image/x-icon" href="./img/pulsaricon-rgb64_2.png" />
-  </head>
-  <body onload="myLoadFunction()">
-    <section class="accordion">
-      <section id="header">
-        <table style="width: 100%; table-layout: fixed">
-          <tr>
-            <td style="text-align: left">
-              <div class="logo">
-                <a href="#" style="text-decoration: none">
-                  <img
-                    src="./img/pulsarlogo.svg"
-                    alt="Logo"
-                    onclick="bleExitPage();"
-                    style="width: 330px; height: 120px; border: none; text-decoration: none; color: #eeeeee00"
-                  />
-                </a>
-              </div>
-            </td>
-            <td style="text-align: center; padding-left: 0px">
-              <div
-                id="id_title"
-                style="
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Pulsar Bluetooth Remote Access</title>
+  <link rel="stylesheet" href="css/normalize.min.css" />
+  <noscript>
+    <link rel="stylesheet" href="css/skel-noscript.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style-desktop.css" />
+  </noscript>
+  <link rel="stylesheet" href="css/style-lr.css" />
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/slider.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="css/test.css" />
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+  <link href="css/element.css" rel="stylesheet" />
+  <link href="css/jquery-impromptu.css" rel="stylesheet" />
+  <script src="js/jquery-2.1.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="./js/ekko-lightbox.js"></script>
+  <script src="js/slider.js"></script>
+  <script src="js/index.js" defer></script>
+  <script src="js/jquery-impromptu.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/param.js"></script>
+  <script src="js/test.js" defer></script>
+  <link rel="icon" type="image/x-icon" href="./img/pulsaricon-rgb64_2.png" />
+</head>
+
+<body onload="myLoadFunction()">
+  <section class="accordion">
+    <section id="header">
+      <table style="width: 100%; table-layout: fixed">
+        <tr>
+          <td style="text-align: left">
+            <div class="logo">
+              <a href="#" style="text-decoration: none">
+                <img src="./img/pulsarlogo.svg" alt="Logo" onclick="bleExitPage();"
+                  style="width: 330px; height: 120px; border: none; text-decoration: none; color: #eeeeee00" />
+              </a>
+            </div>
+          </td>
+          <td style="text-align: center; padding-left: 0px">
+            <div id="id_title" style="
                   font-family: 'Segoe UI SemiBold';
                   font-size: 36pt;
                   font-weight: 500;
                   color: rgb(255, 255, 255);
                   cursor: default;
-                "
-              >
-                REFLECT
-              </div>
-              <div
-                id="device_title"
-                style="font-family: 'Segoe UI SemiBold'; font-size: 36pt; font-weight: 500; color: rgb(255, 255, 255)"
-              ></div>
-            </td>
-            <td style="text-align: right; padding-left: 100px">
-              <img
-                id="connectionImage"
-                src=""
-                alt="Connection Type"
-                title="Toggle connection type between Serial and Bluetooth"
-                onclick="toggle_connection_type()"
-                style="cursor: pointer; width: 100px; transition: transform 0.3s, opacity 0.3s; display: none"
-                onmouseover="this.style.opacity=0.7; this.style.transform='scale(1.1)'"
-                onmouseout="this.style.opacity=1; this.style.transform='scale(1)'"
-              />
-            </td>
-          </tr>
-        </table>
-      </section>
+                ">
+              REFLECT
+            </div>
+            <div id="device_title"
+              style="font-family: 'Segoe UI SemiBold'; font-size: 36pt; font-weight: 500; color: rgb(255, 255, 255)">
+            </div>
+          </td>
+          <td style="text-align: right; padding-left: 100px">
+            <img id="connectionImage" src="" alt="Connection Type"
+              title="Toggle connection type between Serial and Bluetooth" onclick="toggle_connection_type()"
+              style="cursor: pointer; width: 100px; transition: transform 0.3s, opacity 0.3s; display: none"
+              onmouseover="this.style.opacity=0.7; this.style.transform='scale(1.1)'"
+              onmouseout="this.style.opacity=1; this.style.transform='scale(1)'" />
+          </td>
+        </tr>
+      </table>
+    </section>
 
-      <section class="accordion-tabs">
-        <button
-          class="accordion-tab accordion-active"
-          data-actab-group="0"
-          data-actab-id="0"
-          id="id_home"
-          onclick="c_state=0;updateState(c_state); trace_start();"
-        >
-          HOME
-        </button>
-        <button
-          class="accordion-tab"
-          data-actab-group="0"
-          data-actab-id="1"
-          id="id_trace"
-          onclick="c_state=1;updateState(c_state); trace_start();"
-        >
-          TRACE
-        </button>
-        <button
-          class="accordion-tab"
-          data-actab-group="0"
-          data-actab-id="2"
-          id="id_parameters"
-          onclick="c_state=2;updateState(c_state); param_update();"
-        >
-          SETTINGS
-        </button>
-      </section>
-      <section class="accordion-content">
-        <article class="accordion-item accordion-active" data-actab-group="0" data-actab-id="0">
-          <h4 class="accordion-item__label">
-            <div>
-              <table style="width: 68%">
-                <tr>
-                  <td>
-                    <label
-                      id="home-message"
-                      style="
+    <section class="accordion-tabs">
+      <button class="accordion-tab accordion-active" data-actab-group="0" data-actab-id="0" id="id_home"
+        onclick="c_state=0;updateState(c_state); trace_start();">
+        HOME
+      </button>
+      <button class="accordion-tab" data-actab-group="0" data-actab-id="1" id="id_trace"
+        onclick="c_state=1;updateState(c_state); trace_start();">
+        TRACE
+      </button>
+      <button class="accordion-tab" data-actab-group="0" data-actab-id="2" id="id_parameters"
+        onclick="c_state=2;updateState(c_state); param_update();">
+        SETTINGS
+      </button>
+    </section>
+    <section class="accordion-content">
+      <article class="accordion-item accordion-active" data-actab-group="0" data-actab-id="0">
+        <h4 class="accordion-item__label">
+          <div>
+            <table style="width: 68%">
+              <tr>
+                <td>
+                  <label id="home-message" style="
                         font-family: 'Segoe UI Normal';
                         font-size: 24pt;
                         font-style: italic;
                         font-weight: normal;
                         height: 50px;
                         display: inline;
-                      "
-                    ></label>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </h4>
-          <!-- IMPORTANT : donot remove this tag-->
-          <div class="accordion-item__container">
-            <div
-              id="home_tab"
-              style="
+                      "></label>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </h4>
+        <!-- IMPORTANT : donot remove this tag-->
+        <div class="accordion-item__container">
+          <div id="home_tab" style="
                 top: -40%;
                 left: -20%;
                 width: 68%;
@@ -145,323 +114,239 @@
                 border-width: 5px;
                 border-radius: 10px;
                 border-color: rgba(255, 255, 255, 0.952);
-              "
-              align="center"
-            >
-              <table>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </table>
-              <div class="form-popup" id="myForm">
-                <form action="" class="form-container"></form>
-              </div>
-              <table>
-                <tr>
-                  <td></td>
-                  <td><div></div></td>
-                </tr>
-              </table>
-              <table style="width: 100%">
-                <tr>
-                  <td>
-                    <button
-                      type="button"
-                      id="btnScan"
-                      class="button button-style1"
-                      onclick="test_connect(); button_press = 1"
-                    >
-                      DEVICE SCAN
-                    </button>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>
-                    <button
-                      type="button"
-                      id="btnEnd"
-                      class="button button-style1"
-                      onclick="testDisconnect();  button_press = 2"
-                    >
-                      END SESSION
-                    </button>
-                  </td>
-                </tr>
-              </table>
+              " align="center">
+            <table>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
+            <div class="form-popup" id="myForm">
+              <form action="" class="form-container"></form>
+            </div>
+            <table>
+              <tr>
+                <td></td>
+                <td>
+                  <div></div>
+                </td>
+              </tr>
+            </table>
+            <table style="width: 100%">
+              <tr>
+                <td>
+                  <button type="button" id="btnScan" class="button button-style1"
+                    onclick="test_connect(); button_press = 1">
+                    DEVICE SCAN
+                  </button>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <button type="button" id="btnEnd" class="button button-style1"
+                    onclick="testDisconnect();  button_press = 2">
+                    END SESSION
+                  </button>
+                </td>
+              </tr>
+            </table>
 
-              <table style="width: 100%">
-                <tr>
-                  <td>
-                    <table style="width: 10%">
-                      <tr>
-                        <td>
-                          <label
-                            id="data-log-label"
-                            class="label_default"
-                            style="
+            <table style="width: 100%">
+              <tr>
+                <td>
+                  <table style="width: 10%">
+                    <tr>
+                      <td>
+                        <label id="data-log-label" class="label_default" style="
                               font-family: 'Segoe UI Bold';
                               font-weight: bold;
                               font-size: 24pt;
                               width: 80px;
                               height: 80px;
-                            "
-                            >DATA LOG</label
-                          >
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <textarea
-                            id="log"
-                            class="textarea_c"
-                            rows="8"
-                            cols="10"
-                            style="width: 400px; height: 556px"
-                            readonly
-                          ></textarea>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td>
-                    <table style="width: 10%">
-                      <!-- <tr>
+                            ">DATA LOG</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <textarea id="log" class="textarea_c" rows="8" cols="10" style="width: 400px; height: 556px"
+                          readonly></textarea>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td>
+                  <table style="width: 10%">
+                    <!-- <tr>
                             <td> -->
-                      <!-- needs to be changed back to label, as we get better control -->
-                      <!-- <div class = "blocks" id='lvl'></div> 
+                    <!-- needs to be changed back to label, as we get better control -->
+                    <!-- <div class = "blocks" id='lvl'></div> 
                               <div class = "blocks" id='dist'></div>
                               <div class = "blocks" id='sensor_status'></div> -->
-                      <!-- <textarea id="main-params-log" class="textarea3" rows="6" cols="8" style="font-family:'Segoe UI SemiBold';  font-size: 40pt; font-weight: 500; width:380px; height:300px; background: rgb(228, 236, 237); resize:none; border: none;" readonly></textarea>
+                    <!-- <textarea id="main-params-log" class="textarea3" rows="6" cols="8" style="font-family:'Segoe UI SemiBold';  font-size: 40pt; font-weight: 500; width:380px; height:300px; background: rgb(228, 236, 237); resize:none; border: none;" readonly></textarea>
                             </td>
                           </tr> -->
-                      <tr>
-                        <td>
-                          <label
-                            id="parameters-label"
-                            class="label_default"
-                            style="
+                    <tr>
+                      <td>
+                        <label id="parameters-label" class="label_default" style="
                               font-family: 'Segoe UI Bold';
                               font-size: 24pt;
                               font-weight: bold;
                               width: 80px;
                               height: 80px;
-                            "
-                            >LIVE PARAMETERS</label
-                          >
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <label
-                            id="level-label"
-                            class="label_default"
-                            style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500"
-                            >LEVEL:</label
-                          >
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <textarea
-                            id="level-log"
-                            class="textarea2"
-                            rows="1"
-                            cols="8"
-                            style="font-size: 24pt; font-weight: 500; width: 380px; height: 60px"
-                            readonly
-                          ></textarea>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <label
-                            id="distance-label"
-                            class="label_default"
-                            style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500"
-                            >DISTANCE:</label
-                          >
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <textarea
-                            id="distance-log"
-                            class="textarea2"
-                            rows="1"
-                            cols="8"
-                            style="font-size: 24pt; font-weight: 500; width: 380px; height: 60px"
-                            readonly
-                          ></textarea>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <label
-                            id="status-label"
-                            class="label_default"
-                            style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500"
-                            >STATUS:</label
-                          >
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <textarea
-                            id="status-log"
-                            class="textarea2"
-                            rows="1"
-                            cols="8"
-                            style="font-size: 24pt; font-weight: 500; width: 380px; height: 60px"
-                            readonly
-                          ></textarea>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <textarea
-                            id="data-log"
-                            class="textarea2"
-                            rows="8"
-                            cols="8"
-                            style="font-size: 24pt; font-weight: 500; width: 380px; height: 117px"
-                            readonly
-                          ></textarea>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
+                            ">LIVE PARAMETERS</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label id="level-label" class="label_default"
+                          style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500">LEVEL:</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <textarea id="level-log" class="textarea2" rows="1" cols="8"
+                          style="font-size: 24pt; font-weight: 500; width: 380px; height: 60px" readonly></textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label id="distance-label" class="label_default"
+                          style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500">DISTANCE:</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <textarea id="distance-log" class="textarea2" rows="1" cols="8"
+                          style="font-size: 24pt; font-weight: 500; width: 380px; height: 60px" readonly></textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label id="status-label" class="label_default"
+                          style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500">STATUS:</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <textarea id="status-log" class="textarea2" rows="1" cols="8"
+                          style="font-size: 24pt; font-weight: 500; width: 380px; height: 60px" readonly></textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <textarea id="data-log" class="textarea2" rows="8" cols="8"
+                          style="font-size: 24pt; font-weight: 500; width: 380px; height: 117px" readonly></textarea>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
 
+            <table style="width: 100%">
+              <tr>
+                <td>
+                  <label id="command-box-label" class="label_default"
+                    style="font-family: 'Segoe UI Bold'; font-size: 24pt; font-weight: bold; width: 80px; height: 80px">COMMAND
+                    BOX</label>
+                </td>
+              </tr>
+            </table>
+            <!-- <table style="width:100%"> -->
+            <td>
               <table style="width: 100%">
                 <tr>
                   <td>
-                    <label
-                      id="command-box-label"
-                      class="label_default"
-                      style="font-family: 'Segoe UI Bold'; font-size: 24pt; font-weight: bold; width: 80px; height: 80px"
-                      >COMMAND BOX</label
-                    >
-                  </td>
-                </tr>
-              </table>
-              <!-- <table style="width:100%"> -->
-              <td>
-                <table style="width: 100%">
-                  <tr>
-                    <td>
-                      <input
-                        type="text"
-                        name="command-box"
-                        placeholder="Enter the command"
-                        id="cmd"
-                        autocomplete="off"
-                        style="
+                    <input type="text" name="command-box" placeholder="Enter the command" id="cmd" autocomplete="off"
+                      style="
                           font-family: 'Segoe UI SemiBold';
                           font-size: 24pt;
                           font-weight: 500;
                           width: 546px;
                           height: 80px;
-                        "
-                        onkeydown="wasEnter(this)"
-                      />
-                    </td>
+                        " onkeydown="wasEnter(this)" />
+                  </td>
 
-                    <td>
-                      <button type="button" id="btnSend" class="button" onclick="send_command();">SEND</button>
-                    </td>
+                  <td>
+                    <button type="button" id="btnSend" class="button" onclick="send_command();">SEND</button>
+                  </td>
 
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <label
-                        id="lang_select"
-                        class="label_default"
-                        style="
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>
+                    <label id="lang_select" class="label_default" style="
                           font-family: 'Segoe UI SemiBold';
                           font-size: 16pt;
                           font-weight: 500;
                           width: 80px;
                           height: 80px;
-                        "
-                        >LANGUAGE
-                      </label>
-                      <select
-                        name="lang_select_dropdown"
-                        id="lang_select_List"
-                        style="
+                        ">LANGUAGE
+                    </label>
+                    <select name="lang_select_dropdown" id="lang_select_List" style="
                           font-family: 'Segoe UI SemiBold';
                           font-size: 16pt;
                           font-weight: 500;
                           width: 250px;
                           height: 80px;
-                        "
-                        onchange="lang_array_switch();/*lang_switch(); setTimeout(lang_switch, 500);*/"
-                      >
-                        <option value="0" disabled selected>Choose Language</option>
-                        <option value="1">English</option>
-                        <option value="2">German</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button type="button" id="btnClear" class="button" onclick="clearlog(); button_press = 9">
-                        CLEAR
-                      </button>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-              <!-- </table> -->
-            </div>
-          </div>
-        </article>
-        <article class="accordion-item" data-actab-group="0" data-actab-id="1">
-          <h4 class="accordion-item__label">
-            <div>
-              <table style="width: 68%">
-                <tr>
+                        " onchange="lang_array_switch();/*lang_switch(); setTimeout(lang_switch, 500);*/">
+                      <option value="0" disabled selected>Choose Language</option>
+                      <option value="1">English</option>
+                      <option value="2">German</option>
+                    </select>
+                  </td>
                   <td>
-                    <label
-                      id="trace-message"
-                      style="
+                    <button type="button" id="btnClear" class="button" onclick="clearlog(); button_press = 9">
+                      CLEAR
+                    </button>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <!-- </table> -->
+          </div>
+        </div>
+      </article>
+      <article class="accordion-item" data-actab-group="0" data-actab-id="1">
+        <h4 class="accordion-item__label">
+          <div>
+            <table style="width: 68%">
+              <tr>
+                <td>
+                  <label id="trace-message" style="
                         font-family: 'Segoe UI Normal';
                         font-size: 24pt;
                         font-style: italic;
                         font-weight: normal;
                         height: 50px;
                         display: inline;
-                      "
-                    ></label>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </h4>
-          <!-- IMPORTANT : donot remove this tag-->
-          <div
-            id="trace_tab"
-            style="
+                      "></label>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </h4>
+        <!-- IMPORTANT : donot remove this tag-->
+        <div id="trace_tab" style="
               top: -40%;
               left: -20%;
               width: 68%;
@@ -470,44 +355,37 @@
               border-width: 5px;
               border-radius: 10px;
               border-color: rgba(255, 255, 255, 0.952);
-            "
-            align="center"
-          >
-            <div>
-              <table style="width: 100%">
-                <tr>
-                  <label
-                    id="parameters-label-t"
-                    class="label_default"
-                    style="
+            " align="center">
+          <div>
+            <table style="width: 100%">
+              <tr>
+                <label id="parameters-label-t" class="label_default" style="
                       font-family: 'Segoe UI Bold';
                       font-size: 24pt;
                       font-weight: bold;
                       width: 100%;
                       height: 20px;
                       display: inline-block;
-                    "
-                    >LIVE PARAMETERS</label
-                  >
-                </tr>
-              </table>
-            </div>
-            <div class="accordion-item__container">
-              <table style="width: 100%">
-                <!-- check here: start of the trace box -->
-                <tr>
-                  <td>
-                    <div class="chartBox" style="position: left; margin: auto; height: 30rem; width: 52rem">
-                      <canvas id="myChart"></canvas>
-                    </div>
-                  </td>
-                  <!-- Offline mode -->
-                  <script src="./js/chart.js"></script>
-                  <script src="./js/hammer.min.js"></script>
-                  <script src="./js/chartjs-plugin-zoom.min.js"></script>
-                </tr>
+                    ">LIVE PARAMETERS</label>
+              </tr>
+            </table>
+          </div>
+          <div class="accordion-item__container">
+            <table style="width: 100%">
+              <!-- check here: start of the trace box -->
+              <tr>
+                <td>
+                  <div class="chartBox" style="position: left; margin: auto; height: 30rem; width: 52rem">
+                    <canvas id="myChart"></canvas>
+                  </div>
+                </td>
+                <!-- Offline mode -->
+                <script src="./js/chart.js"></script>
+                <script src="./js/hammer.min.js"></script>
+                <script src="./js/chartjs-plugin-zoom.min.js"></script>
+              </tr>
 
-                <!-- <tr>
+              <!-- <tr>
                 <td>
                     <button type="button" class="button" onclick="sendAT('ATrI'); button_press = 4">
                         Version
@@ -525,278 +403,190 @@
                     </button>
                 </td>               
             </tr> -->
-              </table>
-              <!-- end of the trace box-->
-            </div>
-
-            <table style="width: 100%">
-              <tr>
-                <td>
-                  <table style="position: left; margin: auto; height: 100%; width: 2rem">
-                    <tr>
-                      <td>
-                        <label
-                          id="level-label-t"
-                          class="label_default"
-                          style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500"
-                          >LEVEL:</label
-                        >
-                      </td>
-                      <td>
-                        <label
-                          id="status-label-t"
-                          class="label_default"
-                          style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500"
-                          >STATUS:</label
-                        >
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <textarea
-                          id="level-log-t"
-                          class="textarea2"
-                          rows="1"
-                          cols="8"
-                          style="font-size: 24pt; font-weight: 500; width: 380px; height: 117px"
-                          readonly
-                        ></textarea>
-                      </td>
-                      <td>
-                        <textarea
-                          id="status-log-t"
-                          class="textarea2"
-                          rows="1"
-                          cols="8"
-                          style="font-size: 24pt; font-weight: 500; width: 380px; height: 117px"
-                          readonly
-                        ></textarea>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label
-                          id="distance-label-t"
-                          class="label_default"
-                          style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500"
-                          >DISTANCE:</label
-                        >
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <textarea
-                          id="distance-log-t"
-                          class="textarea2"
-                          rows="1"
-                          cols="8"
-                          style="font-size: 24pt; font-weight: 500; width: 380px; height: 117px"
-                          readonly
-                        ></textarea>
-                      </td>
-                      <td>
-                        <textarea
-                          id="data-log_t"
-                          class="textarea2"
-                          rows="4"
-                          cols="1"
-                          style="width: 380px; height: 117px"
-                          readonly
-                        ></textarea>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
             </table>
-            <table style="width: 100%">
-              <tr>
-                <table style="width: 100%">
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td style="position: center">
-                    <button
-                      type="button"
-                      class="button button-style1"
-                      id="btn_trace"
-                      onclick="button_press=10; trace_off();"
-                    >
-                      TRACE OFF
-                    </button>
-                  </td>
-                </table>
-              </tr>
-            </table>
+            <!-- end of the trace box-->
           </div>
-        </article>
-        <!-- <div id="param_fields_main" style=" width:1080px; height:1080px; border-style: solid; border-width: 1px; border-radius: 10px;  border-color: rgba(243, 112, 33, 0.952);"> -->
-        <article class="accordion-item" data-actab-group="0" data-actab-id="2">
-          <h4 class="accordion-item__label">
-            <table style="width: 68%">
-              <tr>
-                <td>
-                  <label
-                    id="settings-message"
-                    style="
+
+          <table style="width: 100%">
+            <tr>
+              <td>
+                <table style="position: left; margin: auto; height: 100%; width: 2rem">
+                  <tr>
+                    <td>
+                      <label id="level-label-t" class="label_default"
+                        style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500">LEVEL:</label>
+                    </td>
+                    <td>
+                      <label id="status-label-t" class="label_default"
+                        style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500">STATUS:</label>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <textarea id="level-log-t" class="textarea2" rows="1" cols="8"
+                        style="font-size: 24pt; font-weight: 500; width: 380px; height: 117px" readonly></textarea>
+                    </td>
+                    <td>
+                      <textarea id="status-log-t" class="textarea2" rows="1" cols="8"
+                        style="font-size: 24pt; font-weight: 500; width: 380px; height: 117px" readonly></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label id="distance-label-t" class="label_default"
+                        style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500">DISTANCE:</label>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <textarea id="distance-log-t" class="textarea2" rows="1" cols="8"
+                        style="font-size: 24pt; font-weight: 500; width: 380px; height: 117px" readonly></textarea>
+                    </td>
+                    <td>
+                      <textarea id="data-log_t" class="textarea2" rows="4" cols="1" style="width: 380px; height: 117px"
+                        readonly></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <table style="width: 100%">
+            <tr>
+              <table style="width: 100%">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="position: center">
+                  <button type="button" class="button button-style1" id="btn_trace"
+                    onclick="button_press=10; trace_off();">
+                    TRACE OFF
+                  </button>
+                </td>
+              </table>
+            </tr>
+          </table>
+        </div>
+      </article>
+      <!-- <div id="param_fields_main" style=" width:1080px; height:1080px; border-style: solid; border-width: 1px; border-radius: 10px;  border-color: rgba(243, 112, 33, 0.952);"> -->
+      <article class="accordion-item" data-actab-group="0" data-actab-id="2">
+        <h4 class="accordion-item__label">
+          <table style="width: 68%">
+            <tr>
+              <td>
+                <label id="settings-message" style="
                       font-family: 'Segoe UI Normal';
                       font-size: 24pt;
                       font-style: italic;
                       font-weight: normal;
                       height: 50px;
                       display: inline;
-                    "
-                    align="center"
-                  ></label>
+                    " align="center"></label>
+              </td>
+            </tr>
+          </table>
+          <div id="bt_range" style="
+                top: -40%;
+                left: -20%;
+                width: 68%;
+                height: 100%;
+                border-style: solid;
+                border-width: 5px;
+                border-radius: 10px;
+                border-color: rgba(255, 255, 255, 0.952);
+              " align="center">
+            <tr>
+              <td>
+                <label id="bluetooth-parameters-label" class="label_default" style="
+                      font-family: 'Segoe UI Bold';
+                      font-size: 24pt;
+                      font-weight: bold;
+                      height: 50px;
+                      display: inline-block;
+                    ">BLUETOOTH PARAMETERS</label>
+              </td>
+            </tr>
+            <table style="width: 100%">
+              <tr>
+                <!-- <td style="font-family: Segoe UI; font-size: 12pt; font-weight: bold; width:180px; height:80px; top:-10%; width:32%; left:30%;">
+                  <h1>BT Range </h1>
+                </td> -->
+                <td>
+                  <label id="bt-range-label1" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">RANGE
+                    &nbsp [</label>
+                  <!-- <td style="position: center; width:15%;"> -->
+                  <output
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
+                    id="rangevalue1">4m</output>
+                  <label id="bt-range-label2" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">]</label>
+                </td>
+                <td style="position: center; width: 67%">
+                  <div class="slidecontainer">
+                    <input type="range" min="1" max="100" value="8" class="slider"
+                      style="position: center; height: 100%" id="myRange"
+                      onchange="testtest(value); button_press = 27;" />
+                  </div>
                 </td>
               </tr>
             </table>
-            <div
-              id="bt_range"
-              style="
-                top: -40%;
-                left: -20%;
-                width: 68%;
-                height: 100%;
-                border-style: solid;
-                border-width: 5px;
-                border-radius: 10px;
-                border-color: rgba(255, 255, 255, 0.952);
-              "
-              align="center"
-            >
+            <table style="width: 100%">
               <tr>
                 <td>
-                  <label
-                    id="bluetooth-parameters-label"
-                    class="label_default"
-                    style="
-                      font-family: 'Segoe UI Bold';
-                      font-size: 24pt;
-                      font-weight: bold;
-                      height: 50px;
-                      display: inline-block;
-                    "
-                    >BLUETOOTH PARAMETERS</label
-                  >
+                  <label id="deviceName" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">DEVICE
+                    NAME</label>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <input type="text" id="deviceName-box" autocomplete="off"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onkeydown="button_press = 28; wasEnter3(this);" />
+                </td>
+                <td>
+                  <button type="button" id="btndeviceName" class="button"
+                    onclick="button_press = 28; bluetooth_param_check();">
+                    UPDATE
+                  </button>
                 </td>
               </tr>
-              <table style="width: 100%">
-                <tr>
-                  <!-- <td style="font-family: Segoe UI; font-size: 12pt; font-weight: bold; width:180px; height:80px; top:-10%; width:32%; left:30%;">
-                  <h1>BT Range </h1>
-                </td> -->
-                  <td>
-                    <label
-                      id="bt-range-label1"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >RANGE &nbsp [</label
-                    >
-                    <!-- <td style="position: center; width:15%;"> -->
-                    <output
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      id="rangevalue1"
-                      >4m</output
-                    >
-                    <label
-                      id="bt-range-label2"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >]</label
-                    >
-                  </td>
-                  <td style="position: center; width: 67%">
-                    <div class="slidecontainer">
-                      <input
-                        type="range"
-                        min="1"
-                        max="100"
-                        value="8"
-                        class="slider"
-                        style="position: center; height: 100%"
-                        id="myRange"
-                        onchange="testtest(value); button_press = 27;"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              </table>
-              <table style="width: 100%">
-                <tr>
-                  <td>
-                    <label
-                      id="deviceName"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >DEVICE NAME</label
-                    >
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>
-                    <input
-                      type="text"
-                      id="deviceName-box"
-                      autocomplete="off"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onkeydown="button_press = 28; wasEnter3(this);"
-                    />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      id="btndeviceName"
-                      class="button"
-                      onclick="button_press = 28; bluetooth_param_check();"
-                    >
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="pWord"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >PIN NUMBER</label
-                    >
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>
-                    <input
-                      type="password"
-                      id="pWord-box"
-                      autocomplete="off"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onkeydown="button_press = 29; wasEnter3(this);"
-                    />
-                  </td>
-                  <td>
-                    <button type="button" id="btnpWord" class="button" onclick="button_press = 29; bluetooth_param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <!-- Introducing new element here-->
+              <tr>
+                <td>
+                  <label id="pWord" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">PIN
+                    NUMBER</label>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <input type="password" id="pWord-box" autocomplete="off"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onkeydown="button_press = 29; wasEnter3(this);" />
+                </td>
+                <td>
+                  <button type="button" id="btnpWord" class="button"
+                    onclick="button_press = 29; bluetooth_param_check();">
+                    UPDATE
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!-- Introducing new element here-->
 
-            <div
-              id="reflecte_devinfo"
-              style="
+          <div id="reflecte_devinfo" style="
                 top: -40%;
                 left: -20%;
                 width: 68%;
@@ -805,39 +595,47 @@
                 border-width: 5px;
                 border-radius: 10px;
                 border-color: rgba(255, 255, 255, 0.952);
-              "
-              align="center"
-            >
-              <tr>
-                <td>
-                  <label
-                    id="reflecte_devinfo-label"
-                    class="label_default"
-                    style="
+              " align="center">
+            <tr>
+              <td>
+                <label id="reflecte_devinfo-label" class="label_default" style="
                       font-family: 'Segoe UI Bold';
                       font-size: 24pt;
                       font-weight: bold;
                       height: 50px;
                       display: inline-block;
-                    "
-                    >REFLECT INFORMATION</label
-                  >
+                    ">REFLECT INFORMATION</label>
+              </td>
+            </tr>
+            <table style="width: 100%">
+              <tr>
+                <td>
+                  <label id="deviceInfo" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">DEVICE
+                    INFO</label>
+                </td>
+                <td>
+                  <div id="deviceInfo-box" style="
+                        font-family: 'Segoe UI SemiBold';
+                        font-size: 24pt;
+                        font-weight: 500;
+                        width: 609.25px;
+                        height: 80px;
+                        border: 1px solid #ccc;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "></div>
                 </td>
               </tr>
-              <table style="width: 100%">
-                <tr>
-                  <td>
-                    <label
-                      id="deviceInfo"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px"
-                      >DEVICE INFO</label
-                    >
-                  </td>
-                  <td>
-                    <div
-                      id="deviceInfo-box"
-                      style="
+              <tr>
+                <td>
+                  <label id="reflecte_fwversion" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">FW
+                    VERSION</label>
+                </td>
+                <td>
+                  <div id="reflecte_fwversion-box" style="
                         font-family: 'Segoe UI SemiBold';
                         font-size: 24pt;
                         font-weight: 500;
@@ -847,23 +645,17 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                      "
-                    ></div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="reflecte_fwversion"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px"
-                      >FW VERSION</label
-                    >
-                  </td>
-                  <td>
-                    <div
-                      id="reflecte_fwversion-box"
-                      style="
+                      "></div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label id="reflecte_access" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">FW
+                    ACCESS</label>
+                </td>
+                <td>
+                  <div id="reflecte_access-box" style="
                         font-family: 'Segoe UI SemiBold';
                         font-size: 24pt;
                         font-weight: 500;
@@ -873,49 +665,17 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                      "
-                    ></div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="reflecte_access"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px"
-                      >FW ACCESS</label
-                    >
-                  </td>
-                  <td>
-                    <div
-                      id="reflecte_access-box"
-                      style="
-                        font-family: 'Segoe UI SemiBold';
-                        font-size: 24pt;
-                        font-weight: 500;
-                        width: 609.25px;
-                        height: 80px;
-                        border: 1px solid #ccc;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                      "
-                    ></div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="unite_info"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px"
-                      >UNITE INFO</label
-                    >
-                  </td>
-                  <td>
-                    <div
-                      id="unite_info-box"
-                      style="
+                      "></div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label id="unite_info" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">UNITE
+                    INFO</label>
+                </td>
+                <td>
+                  <div id="unite_info-box" style="
                         font-family: 'Segoe UI SemiBold';
                         font-size: 24pt;
                         font-weight: 500;
@@ -926,12 +686,8 @@
                         align-items: center;
                         justify-content: flex-end;
                         padding-right: 20px;
-                      "
-                    >
-                      <a
-                        href="#"
-                        onclick="refreshUniteInfo()"
-                        style="
+                      ">
+                    <a href="#" onclick="refreshUniteInfo()" style="
                           text-decoration: none;
                           background-color: #f37021;
                           color: white;
@@ -939,25 +695,22 @@
                           border-radius: 5px;
                           display: flex;
                           align-items: center;
-                        "
-                      >
-                        <i class="fa fa-refresh" style="font-size: 36px; margin-right: 5px"></i>
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
+                        ">
+                      <i class="fa fa-refresh" style="font-size: 36px; margin-right: 5px"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
 
-            <!-- Introducing new element here-->
-          </h4>
-          <!-- IMPORTANT : donot remove this tag-->
+          <!-- Introducing new element here-->
+        </h4>
+        <!-- IMPORTANT : donot remove this tag-->
 
-          <div class="accordion-item__container">
-            <!-- <div id="param_fields_main" style=" width:90%; height:90%; border-style: solid; border-width: 1px; border-radius: 10px;  border-color: rgba(243, 112, 33, 0.952);"> -->
-            <div
-              id="param_fields"
-              style="
+        <div class="accordion-item__container">
+          <!-- <div id="param_fields_main" style=" width:90%; height:90%; border-style: solid; border-width: 1px; border-radius: 10px;  border-color: rgba(243, 112, 33, 0.952);"> -->
+          <div id="param_fields" style="
                 left: -40%;
                 top: -20%;
                 width: 68%;
@@ -966,33 +719,23 @@
                 border-width: 5px;
                 border-radius: 10px;
                 border-color: rgba(255, 255, 255, 0.952);
-              "
-              align="center"
-            >
-              <tr>
-                <td>
-                  <label
-                    id="radar-parameters-label"
-                    class="label_default"
-                    style="
+              " align="center">
+            <tr>
+              <td>
+                <label id="radar-parameters-label" class="label_default" style="
                       font-family: 'Segoe UI Bold';
                       font-size: 24pt;
                       font-weight: bold;
                       height: 50px;
                       display: inline-block;
-                    "
-                    >RADAR PARAMETERS</label
-                  >
-                </td>
-              </tr>
-              <tr style="width: 100%">
-                <td>
-                  <div class="static_image">
-                    <a style="text-decoration: none">
-                      <img
-                        src="./img/tank1.png"
-                        alt="static_image"
-                        style="
+                    ">RADAR PARAMETERS</label>
+              </td>
+            </tr>
+            <tr style="width: 100%">
+              <td>
+                <div class="static_image">
+                  <a style="text-decoration: none">
+                    <img src="./img/tank1.png" alt="static_image" style="
                           width: 65%;
                           height: 65%;
                           border: none;
@@ -1000,289 +743,219 @@
                           color: #eeeeee00;
                           margin-top: 20px;
                           margin-bottom: 50px;
-                        "
-                      />
-                    </a>
-                  </div>
+                        " />
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <table id="application_parameters">
+              <tr>
+                <td>
+                  <label id="p241" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">INDICATOR
+                    MODE (P241)</label>
+                </td>
+                <!-- <td><input type="text" id="p241-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 19; wasEnter2(this);"></td> -->
+                <td>
+                  <select name="p241dropdown" id="p241List"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onchange="button_press = 19;">
+                    <option value="0">Choose P241</option>
+                    <option value="1">0 = OFF</option>
+                    <option value="2">1 = Inst. Liquid</option>
+                    <option value="3">2 = Inst. Solid</option>
+                    <!-- <option value="4"> 3 = Inst. Liquid </option>   -->
+                    <option value="5">4 = Meas. Liquid</option>
+                    <option value="6">5 = Meas. Solid</option>
+                    <!-- <option value="7"> 6 = Meas. Solid </option>   -->
+                    <option value="8">7 = Health</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="button" id="btnp241" class="button" onclick="button_press = 19; param_check();">
+                    UPDATE
+                  </button>
                 </td>
               </tr>
-              <table id="application_parameters">
-                <tr>
-                  <td>
-                    <label
-                      id="p241"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >INDICATOR MODE (P241)</label
-                    >
-                  </td>
-                  <!-- <td><input type="text" id="p241-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 19; wasEnter2(this);"></td> -->
-                  <td>
-                    <select
-                      name="p241dropdown"
-                      id="p241List"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onchange="button_press = 19;"
-                    >
-                      <option value="0">Choose P241</option>
-                      <option value="1">0 = OFF</option>
-                      <option value="2">1 = Inst. Liquid</option>
-                      <option value="3">2 = Inst. Solid</option>
-                      <!-- <option value="4"> 3 = Inst. Liquid </option>   -->
-                      <option value="5">4 = Meas. Liquid</option>
-                      <option value="6">5 = Meas. Solid</option>
-                      <!-- <option value="7"> 6 = Meas. Solid </option>   -->
-                      <option value="8">7 = Health</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button type="button" id="btnp241" class="button" onclick="button_press = 19; param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="p100"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >MEASUREMENT MODE (P100)</label
-                    >
-                  </td>
-                  <!-- <td><input type="text" id="p100-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 20; wasEnter2(this);"></td> -->
-                  <td>
-                    <select
-                      name="p100dropdown"
-                      id="p100List"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onchange="button_press = 20;"
-                    >
-                      <option value="0">Choose P100</option>
-                      <option value="1">1 = Distance</option>
-                      <option value="2">2 = Level</option>
-                      <option value="3">3 = Space</option>
-                      <option value="4">4 = Volume</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button type="button" id="btnp100" class="button" onclick="button_press = 20; param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="p104"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >MEASUREMENT UNITS (P104)</label
-                    >
-                  </td>
-                  <!-- <td><input type="text" id="p104-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 21; wasEnter2(this);"></td> -->
-                  <td>
-                    <select
-                      name="p104dropdown"
-                      id="p104List"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onchange="button_press = 21;"
-                    >
-                      <option value="0">Choose P104</option>
-                      <option value="1">1 = m</option>
-                      <option value="2">2 = cm</option>
-                      <option value="3">3 = mm</option>
-                      <option value="4">4 = ft</option>
-                      <option value="5">5 = ins</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button type="button" id="btnp104" class="button" onclick="button_press = 21; param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="p105"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >EMPTY DISTANCE (P105)</label
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      id="p105-box"
-                      autocomplete="off"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onkeydown="button_press = 22; wasEnter2(this)"
-                    />
-                  </td>
-                  <td>
-                    <button type="button" id="btnp105" class="button" onclick="button_press = 22; param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="p106"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >SPAN (P106)</label
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      id="p106-box"
-                      autocomplete="off"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onkeydown="button_press = 23; wasEnter2(this);"
-                    />
-                  </td>
-                  <td>
-                    <button type="button" id="btnp106" class="button" onclick="button_press = 23; param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="p808"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >FAIL MODE (P808)</label
-                    >
-                  </td>
-                  <!-- <td><input type="text" id="p808-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 24; wasEnter2(this);"></td> -->
-                  <td>
-                    <select
-                      name="p808dropdown"
-                      id="p808List"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onchange="button_press = 24;"
-                    >
-                      <option value="0">Choose P808</option>
-                      <option value="1">1 = Hold</option>
-                      <option value="2">2 = High</option>
-                      <option value="3">3 = Low</option>
-                      <option value="4">4 = 22mA</option>
-                      <option value="5">5 = 3.8mA</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button type="button" id="btnp808" class="button" onclick="button_press = 24; param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="p605"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >VOLUME UNITS (P605)</label
-                    >
-                  </td>
-                  <!-- <td><input type="text" id="p605-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 25; wasEnter2(this);"></td> -->
-                  <td>
-                    <select
-                      name="p605dropdown"
-                      id="p605List"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onchange="button_press = 25;"
-                    >
-                      <option value="0">Choose P605</option>
-                      <option value="1">0 = None</option>
-                      <option value="2">1 = Tons</option>
-                      <option value="3">2 = Tonnes</option>
-                      <option value="4">3 = m³</option>
-                      <option value="5">4 = Litres</option>
-                      <option value="6">5 = Imperial Gal</option>
-                      <option value="7">6 = US Gal</option>
-                      <option value="8">7 = ft³</option>
-                      <option value="9">8 = Barrels</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button type="button" id="btnp605" class="button" onclick="button_press = 25; param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label
-                      id="p21"
-                      class="label_default"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px"
-                      >SET DISTANCE (P21)</label
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      id="p21-box"
-                      autocomplete="off"
-                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
-                      onkeydown="button_press = 26; wasEnter2(this);"
-                    />
-                  </td>
-                  <td>
-                    <button type="button" id="btnp21" class="button" onclick="button_press = 26; param_check();">
-                      UPDATE
-                    </button>
-                  </td>
-                </tr>
-              </table>
-            </div>
+              <tr>
+                <td>
+                  <label id="p100" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">MEASUREMENT
+                    MODE (P100)</label>
+                </td>
+                <!-- <td><input type="text" id="p100-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 20; wasEnter2(this);"></td> -->
+                <td>
+                  <select name="p100dropdown" id="p100List"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onchange="button_press = 20;">
+                    <option value="0">Choose P100</option>
+                    <option value="1">1 = Distance</option>
+                    <option value="2">2 = Level</option>
+                    <option value="3">3 = Space</option>
+                    <option value="4">4 = Volume</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="button" id="btnp100" class="button" onclick="button_press = 20; param_check();">
+                    UPDATE
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label id="p104" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">MEASUREMENT
+                    UNITS (P104)</label>
+                </td>
+                <!-- <td><input type="text" id="p104-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 21; wasEnter2(this);"></td> -->
+                <td>
+                  <select name="p104dropdown" id="p104List"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onchange="button_press = 21;">
+                    <option value="0">Choose P104</option>
+                    <option value="1">1 = m</option>
+                    <option value="2">2 = cm</option>
+                    <option value="3">3 = mm</option>
+                    <option value="4">4 = ft</option>
+                    <option value="5">5 = ins</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="button" id="btnp104" class="button" onclick="button_press = 21; param_check();">
+                    UPDATE
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label id="p105" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">EMPTY
+                    DISTANCE (P105)</label>
+                </td>
+                <td>
+                  <input type="text" id="p105-box" autocomplete="off"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onkeydown="button_press = 22; wasEnter2(this)" />
+                </td>
+                <td>
+                  <button type="button" id="btnp105" class="button" onclick="button_press = 22; param_check();">
+                    UPDATE
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label id="p106" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">SPAN
+                    (P106)</label>
+                </td>
+                <td>
+                  <input type="text" id="p106-box" autocomplete="off"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onkeydown="button_press = 23; wasEnter2(this);" />
+                </td>
+                <td>
+                  <button type="button" id="btnp106" class="button" onclick="button_press = 23; param_check();">
+                    UPDATE
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label id="p808" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">FAIL
+                    MODE (P808)</label>
+                </td>
+                <!-- <td><input type="text" id="p808-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 24; wasEnter2(this);"></td> -->
+                <td>
+                  <select name="p808dropdown" id="p808List"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onchange="button_press = 24;">
+                    <option value="0">Choose P808</option>
+                    <option value="1">1 = Hold</option>
+                    <option value="2">2 = High</option>
+                    <option value="3">3 = Low</option>
+                    <option value="4">4 = 22mA</option>
+                    <option value="5">5 = 3.8mA</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="button" id="btnp808" class="button" onclick="button_press = 24; param_check();">
+                    UPDATE
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label id="p605" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">VOLUME
+                    UNITS (P605)</label>
+                </td>
+                <!-- <td><input type="text" id="p605-box" style="font-size: 24pt; font-weight: bold; width:180px; height:80px;" onkeydown="button_press = 25; wasEnter2(this);"></td> -->
+                <td>
+                  <select name="p605dropdown" id="p605List"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onchange="button_press = 25;">
+                    <option value="0">Choose P605</option>
+                    <option value="1">0 = None</option>
+                    <option value="2">1 = Tons</option>
+                    <option value="3">2 = Tonnes</option>
+                    <option value="4">3 = m³</option>
+                    <option value="5">4 = Litres</option>
+                    <option value="6">5 = Imperial Gal</option>
+                    <option value="7">6 = US Gal</option>
+                    <option value="8">7 = ft³</option>
+                    <option value="9">8 = Barrels</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="button" id="btnp605" class="button" onclick="button_press = 25; param_check();">
+                    UPDATE
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label id="p21" class="label_default"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">SET
+                    DISTANCE (P21)</label>
+                </td>
+                <td>
+                  <input type="text" id="p21-box" autocomplete="off"
+                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 270px; height: 80px"
+                    onkeydown="button_press = 26; wasEnter2(this);" />
+                </td>
+                <td>
+                  <button type="button" id="btnp21" class="button" onclick="button_press = 26; param_check();">
+                    UPDATE
+                  </button>
+                </td>
+              </tr>
+            </table>
           </div>
-        </article>
-        <!-- </div> -->
-      </section>
-
-      <div>
-        <table>
-          <tr>
-            <td style="text-align: center; font-size: 24px; background-color: rgb(51, 179, 74); color: #2e2323">
-              <p
-                style="
-                  font-family: 'Segoe UI Normal';
-                  width: 115%;
-                  text-align: center;
-                  color: #ffffff;
-                  font-size: 20pt;
-                  line-height: 40px;
-                "
-              >
-                &copy; Pulsar Measurement 2024<br />
-              </p>
-            </td>
-            <td style="text-align: center; font-size: 24px; background-color: rgb(51, 179, 74); color: #2e2323">
-              <p
-                style="
-                  font-family: 'Segoe UI Normal';
-                  width: 0%;
-                  text-align: right;
-                  color: #ffffff;
-                  font-size: 12pt;
-                  line-height: 40px;
-                  font-style: italic;
-                "
-              >
-                <v0 class="0.0.4b"></v0><br />
-              </p>
-            </td>
-          </tr>
-        </table>
-      </div>
+        </div>
+      </article>
+      <!-- </div> -->
     </section>
-    <script src="js/script-lr2.js"></script>
-  </body>
+
+    <div>
+      <table>
+        <tr>
+          <td style=" text-align:center;font-size:24px;  background-color:rgb(51, 179, 74);;color:#2e2323;">
+            <p
+              style="font-family:'Segoe UI Normal';  width: 115%; text-align:center; color:#ffffff; font-size:20pt;line-height:40px;">
+              &copy; Pulsar Measurement 2024<br></p>
+          </td>
+          <td style=" text-align:center;font-size:24px;  background-color:rgb(51, 179, 74);;color:#2e2323;">
+            <p
+              style="font-family:'Segoe UI Normal';  width: 0%; text-align:right; color:#ffffff; font-size:12pt;line-height:40px; font-style: italic;">
+              v0.0.4b<br></p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </section>
+  <script src="js/script-lr2.js"></script>
+</body>
+
 </html>
