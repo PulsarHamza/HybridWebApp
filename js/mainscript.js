@@ -2010,33 +2010,49 @@ async function connectToSerialPort() {
     log(err + "\n");
   }
 }
-async function sendTX(stringToSend) {
+async function sendTX(data, isHex = false) {
   try {
     if (!port) {
       log("Serial port is not connected.");
       return;
     }
+
     const writer = port.writable.getWriter();
-    if (stringToSend !== "+++") {
-      stringToSend += "\r\n";
+    let encodedData;
+
+    if (isHex) {
+      // Data is already a Uint8Array, no need to encode to hex string
+      encodedData = new Uint8Array(data);
+      console.log("Data sent (binary):", encodedData);
+    } else {
+      // Treat data as ASCII string
+      let stringToSend = data;
+      if (stringToSend !== "+++") {
+        stringToSend += "\r\n";
+      }
+
+      // Log only if it's not one of the excluded strings
+      if (
+        !stringToSend.includes("GET ECHO") &&
+        !stringToSend.includes("GET DATEM") &&
+        !stringToSend.includes("SENDPART1") &&
+        !stringToSend.includes("SENDPART2") &&
+        !stringToSend.includes("SENDPART3") &&
+        !stringToSend.includes("host tunnel") &&
+        stringToSend != "+++" &&
+        stringToSend != "\r\n" &&
+        !(isTraceOn == 1 && (stringToSend.includes("/P104") || stringToSend.includes("/P605")))
+      ) {
+        log(" → " + stringToSend);
+      }
+
+      // Encode ASCII string to send
+      encodedData = new TextEncoder().encode(stringToSend);
+      console.log("Data sent (ASCII):", stringToSend);
     }
-    //change this to does not include so it does not show the appended strings
-    if (
-      !stringToSend.includes("GET ECHO") &&
-      !stringToSend.includes("GET DATEM") &&
-      !stringToSend.includes("SENDPART1") &&
-      !stringToSend.includes("SENDPART2") &&
-      !stringToSend.includes("SENDPART3") &&
-      !stringToSend.includes("host tunnel") &&
-      stringToSend != "+++" &&
-      stringToSend != "\r\n" &&
-      !(isTraceOn == 1 && (stringToSend.includes("/P104") || stringToSend.includes("/P605")))
-    ) {
-      log(" → " + stringToSend);
-    }
-    const data = new TextEncoder().encode(stringToSend);
-    await writer.write(data);
-    console.log("Data sent:", stringToSend);
+
+    // Write the encoded data to the port
+    await writer.write(encodedData);
     writer.releaseLock();
   } catch (error) {
     console.error("Error sending data:", error);
@@ -2836,7 +2852,144 @@ function getDeviceInfo() {
   if (userAgent.indexOf("Linux") != -1) os = "Linux";
   const browser = navigator.userAgent;
   const deviceInfo = `OS: ${os}, Browser: ${browser}`;
-  //document.getElementById('deviceInfo').value = deviceInfo;
+}
+// Function to get data from a file
+function openXML() {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".xml"; // Accept only XML files
+  fileInput.onchange = function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const filereader = new FileReader();
+    filereader.onload = function (e) {
+      const xmlString = e.target.result;
+      const parsedData = parseXML(xmlString);
+      const firstSet = createUint8Array(parsedData, 0, 60); // First 60 parameters
+      const secondSet = createUint8Array(parsedData, 60, 60); // Second 60 parameters
+      const remainingSet = createUint8Array(parsedData, 120, 37); // Remaining parameters up to 157
+      console.log(JSON.stringify(firstSet, null, 4));
+      console.log(JSON.stringify(secondSet, null, 4));
+      console.log(JSON.stringify(remainingSet, null, 4));
+    };
+    filereader.readAsText(file);
+  };
+  fileInput.click(); // Click the file input programmatically
+}
+function parseXML(xmlString) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+
+  const parametersList = xmlDoc.getElementsByTagName("Parameters");
+  const parsedData = [];
+  const indexSet = new Set();
+
+  for (let i = 0; i < parametersList.length; i++) {
+    const parameters = parametersList[i];
+    const index = parameters.getElementsByTagName("Index")[0].textContent;
+    if (indexSet.has(index)) {
+      continue; // Skip if index already exists
+    }
+    const parameter = parameters.getElementsByTagName("Parameter")[0].textContent;
+    const value = parameters.getElementsByTagName("Value")[0].textContent;
+    const floatValueHex = floatToBigEndianHex(value);
+
+    // Convert float to uint8 array
+    const floatArray = new Float32Array(1);
+    floatArray[0] = value;
+    const uintArray = new Uint8Array(floatArray.buffer).reverse();
+
+    // Push parsed data into array
+    parsedData.push({
+      index,
+      parameter,
+      value,
+      floatValueHex,
+      uint8Array: Array.from(uintArray), // Store the uint8 array
+    });
+
+    indexSet.add(index); // Add index to set to track uniqueness
+  }
+  return parsedData;
+}
+// Function to convert float to big endian hexadecimal string (uppercase)
+function floatToBigEndianHex(value) {
+  const floatArray = new Float32Array(1);
+  floatArray[0] = value;
+  const uintArray = new Uint8Array(floatArray.buffer);
+
+  // Reverse byte order to convert to big endian
+  const reversedBytes = uintArray.reverse();
+
+  return Array.from(reversedBytes, (byte) => byte.toString(16).toUpperCase().padStart(2, "0")).join("");
+}
+// Function to create Uint8Array of a set of values
+function createUint8Array(parsedData, start, count) {
+  const length = Math.min(count, parsedData.length - start) * 4; // Each float is 4 bytes
+  const uint8Array = new Uint8Array(length); // Create a Uint8Array with appropriate length
+  let currentIndex = 0;
+
+  for (let i = start; i < start + count && i < parsedData.length; i++) {
+    const data = parsedData[i];
+    const uintArray = data.uint8Array;
+
+    for (let j = 0; j < uintArray.length; j++) {
+      uint8Array[currentIndex++] = uintArray[j];
+    }
+  }
+
+  return uint8Array;
+}
+// Function to save data to a file
+function saveXML(data, filename, type) {
+  try {
+    var currentDate = `${new Date().toJSON().slice(0, 10)}`;
+    var today = new Date();
+    var currentHours = ("0" + today.getHours()).substr(-2);
+    var currentMins = ("0" + today.getMinutes()).substr(-2);
+    var currentSecs = ("0" + today.getSeconds()).substr(-2);
+    filename = currentDate + "_" + currentHours + "_" + currentMins + "_" + currentSecs;
+    var xhr;
+    if (window.XMLHttpRequest) {
+      xhr = new XMLHttpRequest();
+    } else {
+      xhr = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xhr.open("GET", xmlfile, false);
+    xhr.send(null);
+    var xmlDoc = xhr.responseXML;
+    var parser = new DOMParser();
+    var xmlDoc = parser.parseFromString(xhr.responseText, "application/xml");
+    var param_title;
+    var param_total;
+    param_title = xmlDoc.getElementsByTagName("Parameters");
+    param_total = param_title[1].getElementsByTagName("Value")[0].childNodes[0].nodeValue;
+    for (var i = 0; i < param_total; i++) {
+      if (param_num[i] == param_title[i + 1].getElementsByTagName("Parameter")[0].childNodes[0].nodeValue) {
+        param_title[i + 1].getElementsByTagName("Value")[0].childNodes[0].nodeValue = param_val[i];
+        param_title[i + 1].getElementsByTagName("Display_value")[0].childNodes[0].nodeValue = param_val[i];
+      }
+    }
+    var xmlDocSring = new XMLSerializer();
+    var xmlString = xmlDocSring.serializeToString(xmlDoc);
+    var file = new Blob([xmlString], { type: "application/xml" });
+    if (window.navigator.msSaveOrOpenBlob) window.navigator.msSaveOrOpenBlob(file, filename);
+    else {
+      var a = document.createElement("a"),
+        url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 0);
+    }
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
 function checkSerialSupport() {
