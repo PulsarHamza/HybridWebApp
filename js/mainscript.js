@@ -2869,9 +2869,9 @@ function openXML() {
       const firstSet = createUint8Array(parsedData, 0, 60); // First 60 parameters
       const secondSet = createUint8Array(parsedData, 60, 60); // Second 60 parameters
       const remainingSet = createUint8Array(parsedData, 120, 37); // Remaining parameters up to 157
-      console.log(JSON.stringify(firstSet, null, 4));
-      console.log(JSON.stringify(secondSet, null, 4));
-      console.log(JSON.stringify(remainingSet, null, 4));
+      alert(JSON.stringify(firstSet, null, 4));
+      alert(JSON.stringify(secondSet, null, 4));
+      alert(JSON.stringify(remainingSet, null, 4));
     };
     filereader.readAsText(file);
   };
