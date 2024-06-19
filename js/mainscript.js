@@ -163,6 +163,9 @@ let CommandSent = "";
 let commandboxsend = false;
 let param_update_flag = false;
 let reader;
+let combined_firstSet;
+let combined_secondSet;
+let combined_remainingSet;
 
 // Resetting all the variables
 function reset_params() {
@@ -1293,20 +1296,14 @@ async function listenRX() {
         clearTimeout(noResponseTimeout);
 
         // Set a timeout to process data after 50 ms
-        receiveTimeout = setTimeout(() => {
+        receiveTimeout = setTimeout(async () => {
+          // Make the function inside setTimeout async
           // Convert the hex string to ASCII characters
           receiveBufferASCII += receiveBufferHex
             .match(/.{1,2}/g)
             .reduce((acc, char) => acc + String.fromCharCode(parseInt(char, 16)), "");
-          //process the accumulated data using the functions
-          // Process the accumulated data
-          //over here we will add the function to call to process the data
-          // for (let i = 0; i < receiveBufferHex.length / 8; i++) {
-          //   getVal_test(i);
-          // }
-          //console.log('[readLoop] Processed Data:', receiveBufferHex);
 
-          // Clear the buffers
+          // Process the accumulated data
           if (receiveBufferASCII.includes("success")) {
             log("Serial port connected successfully!");
             log("Ready to communicate!\n");
@@ -1350,7 +1347,7 @@ async function listenRX() {
             }
             document.getElementById("reflecte_access-box").innerText = access_string;
           } else {
-            processReceivedData();
+            await processReceivedData(); // Await here inside the async function
           }
 
           receiveBufferHex = "";
@@ -1368,9 +1365,13 @@ async function listenRX() {
 
 // 4- HEX to ASCII conversion
 function hexToAscii(hexString) {
+  if (!hexString) return ""; // Return empty string if hexString is falsy (null, undefined, empty string, etc.)
+
+  // Split hexString into pairs of characters, convert each pair from hex to ASCII, and concatenate into a string
   return hexString.match(/.{1,2}/g).reduce((acc, char) => acc + String.fromCharCode(parseInt(char, 16)), "");
 }
-function processReceivedData() {
+
+async function processReceivedData() {
   const doc_value = CommandSent;
   if (
     doc_value == "GET ECHO" ||
@@ -1382,6 +1383,16 @@ function processReceivedData() {
     var hex = interpretHex(receiveBufferHex); //create a test function for this to emulate how this is working as well, what will be the parameter here
   } else {
     //these checks are all ascii related and hence will use the ascii conversion of data
+    if (hexToAscii(receiveBufferHex).includes("/SET")) {
+      let afterColon = hexToAscii(receiveBufferHex).split("T")[1];
+      if (afterColon.includes("1:DONE")) {
+        await sendTX(combined_secondSet, true);
+        CommandSent = "";
+      } else if (afterColon.includes("2:DONE")) {
+        await sendTX(combined_remainingSet, true);
+        CommandSent = "";
+      }
+    }
     if (hexToAscii(receiveBufferHex).includes("/P")) {
       //
       populate_params(hexToAscii(receiveBufferHex));
@@ -1410,6 +1421,7 @@ function processReceivedData() {
     ) {
       log(" ← " + hexToAscii(receiveBufferHex));
     }
+    //include her which can be used to send more
   }
 }
 function hexToInt16(hex1, hex2) {
@@ -2021,7 +2033,7 @@ async function sendTX(data, isHex = false) {
     let encodedData;
 
     if (isHex) {
-      // Data is already a Uint8Array, no need to encode to hex string
+      // Data is already a Uint8Array, no need to encode further
       encodedData = new Uint8Array(data);
       console.log("Data sent (binary):", encodedData);
     } else {
@@ -2039,9 +2051,9 @@ async function sendTX(data, isHex = false) {
         !stringToSend.includes("SENDPART2") &&
         !stringToSend.includes("SENDPART3") &&
         !stringToSend.includes("host tunnel") &&
-        stringToSend != "+++" &&
-        stringToSend != "\r\n" &&
-        !(isTraceOn == 1 && (stringToSend.includes("/P104") || stringToSend.includes("/P605")))
+        stringToSend !== "+++" &&
+        stringToSend !== "\r\n" &&
+        !(isTraceOn === 1 && (stringToSend.includes("/P104") || stringToSend.includes("/P605")))
       ) {
         log(" → " + stringToSend);
       }
@@ -2854,27 +2866,51 @@ function getDeviceInfo() {
   const deviceInfo = `OS: ${os}, Browser: ${browser}`;
 }
 // Function to get data from a file
-function openXML() {
+async function openXML() {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept = ".xml"; // Accept only XML files
-  fileInput.onchange = function (e) {
+  fileInput.onchange = async function (e) {
     const file = e.target.files[0];
     if (!file) return;
 
     const filereader = new FileReader();
-    filereader.onload = function (e) {
+    filereader.onload = async function (e) {
       const xmlString = e.target.result;
       const parsedData = parseXML(xmlString);
       const firstSet = createUint8Array(parsedData, 0, 60); // First 60 parameters
       const secondSet = createUint8Array(parsedData, 60, 60); // Second 60 parameters
       const remainingSet = createUint8Array(parsedData, 120, 37); // Remaining parameters up to 157
-      // by now we have all the parameter sets interpreted from the XML ready to be sent to the
-      // now we have to send the bytes prefixed by /SAVEPART1, /SAVEPART2, /SAVEPART3, during this process none of the other commands can work so it needs to be an alert
+
+      combined_firstSet = concatenateStringAndUint8Array("/SET1(60):", firstSet);
+      combined_secondSet = concatenateStringAndUint8Array("/SET2(60):", secondSet);
+      combined_remainingSet = concatenateStringAndUint8Array("/SET3(37):", remainingSet);
     };
     filereader.readAsText(file);
   };
   fileInput.click(); // Click the file input programmatically
+}
+
+function concatenateStringAndUint8Array(string, byteArray) {
+  // Encode the string to Uint8Array
+  const stringEncoded = new TextEncoder().encode(string);
+  // Create a new Uint8Array to hold the concatenated result
+  const combinedArray = new Uint8Array(stringEncoded.length + byteArray.length);
+  // Set the encoded string in the new array
+  combinedArray.set(stringEncoded, 0);
+  // Set the byteArray after the encoded string
+  combinedArray.set(byteArray, stringEncoded.length);
+  return combinedArray;
+}
+
+async function send_paramset() {
+  try {
+    await sendTX(combined_firstSet, true);
+    CommandSent = "";
+  } catch (error) {
+    console.error("Error sending data:", error);
+    log("Error sending data. Please check the connection and try again.");
+  }
 }
 
 function parseXML(xmlString) {
