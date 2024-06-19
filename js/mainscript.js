@@ -2869,14 +2869,14 @@ function openXML() {
       const firstSet = createUint8Array(parsedData, 0, 60); // First 60 parameters
       const secondSet = createUint8Array(parsedData, 60, 60); // Second 60 parameters
       const remainingSet = createUint8Array(parsedData, 120, 37); // Remaining parameters up to 157
-      alert(JSON.stringify(firstSet, null, 4));
-      alert(JSON.stringify(secondSet, null, 4));
-      alert(JSON.stringify(remainingSet, null, 4));
+      // by now we have all the parameter sets interpreted from the XML ready to be sent to the
+      // now we have to send the bytes prefixed by /SAVEPART1, /SAVEPART2, /SAVEPART3, during this process none of the other commands can work so it needs to be an alert
     };
     filereader.readAsText(file);
   };
   fileInput.click(); // Click the file input programmatically
 }
+
 function parseXML(xmlString) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xmlString, "text/xml");
@@ -2913,7 +2913,7 @@ function parseXML(xmlString) {
   }
   return parsedData;
 }
-// Function to convert float to big endian hexadecimal string (uppercase)
+
 function floatToBigEndianHex(value) {
   const floatArray = new Float32Array(1);
   floatArray[0] = value;
