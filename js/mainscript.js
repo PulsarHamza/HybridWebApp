@@ -166,6 +166,8 @@ let reader;
 let combined_firstSet;
 let combined_secondSet;
 let combined_remainingSet;
+let parsedData = [];
+let xml_loaded = false;
 
 // Resetting all the variables
 function reset_params() {
@@ -2876,6 +2878,7 @@ async function openXML() {
 
     const filereader = new FileReader();
     filereader.onload = async function (e) {
+      xml_loaded = true;
       const xmlString = e.target.result;
       const parsedData = parseXML(xmlString);
       const firstSet = createUint8Array(parsedData, 0, 60); // First 60 parameters
@@ -2918,7 +2921,7 @@ function parseXML(xmlString) {
   const xmlDoc = parser.parseFromString(xmlString, "text/xml");
 
   const parametersList = xmlDoc.getElementsByTagName("Parameters");
-  const parsedData = [];
+  parsedData = [];
   const indexSet = new Set();
 
   for (let i = 0; i < parametersList.length; i++) {
@@ -2977,55 +2980,36 @@ function createUint8Array(parsedData, start, count) {
 
   return uint8Array;
 }
-// Function to save data to a file
-function saveXML(data, filename, type) {
-  try {
-    var currentDate = `${new Date().toJSON().slice(0, 10)}`;
-    var today = new Date();
-    var currentHours = ("0" + today.getHours()).substr(-2);
-    var currentMins = ("0" + today.getMinutes()).substr(-2);
-    var currentSecs = ("0" + today.getSeconds()).substr(-2);
-    filename = currentDate + "_" + currentHours + "_" + currentMins + "_" + currentSecs;
-    var xhr;
-    if (window.XMLHttpRequest) {
-      xhr = new XMLHttpRequest();
-    } else {
-      xhr = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    xhr.open("GET", xmlfile, false);
-    xhr.send(null);
-    var xmlDoc = xhr.responseXML;
-    var parser = new DOMParser();
-    var xmlDoc = parser.parseFromString(xhr.responseText, "application/xml");
-    var param_title;
-    var param_total;
-    param_title = xmlDoc.getElementsByTagName("Parameters");
-    param_total = param_title[1].getElementsByTagName("Value")[0].childNodes[0].nodeValue;
-    for (var i = 0; i < param_total; i++) {
-      if (param_num[i] == param_title[i + 1].getElementsByTagName("Parameter")[0].childNodes[0].nodeValue) {
-        param_title[i + 1].getElementsByTagName("Value")[0].childNodes[0].nodeValue = param_val[i];
-        param_title[i + 1].getElementsByTagName("Display_value")[0].childNodes[0].nodeValue = param_val[i];
-      }
-    }
-    var xmlDocSring = new XMLSerializer();
-    var xmlString = xmlDocSring.serializeToString(xmlDoc);
-    var file = new Blob([xmlString], { type: "application/xml" });
-    if (window.navigator.msSaveOrOpenBlob) window.navigator.msSaveOrOpenBlob(file, filename);
-    else {
-      var a = document.createElement("a"),
-        url = URL.createObjectURL(file);
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function () {
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }, 0);
-    }
-  } catch (err) {
-    alert(err.message);
+// Function to edit XML data and save to a file
+function edit_XML() {
+  if (!xml_loaded) {
+    return;
   }
+  parsedData = parsedData.map((data) => {
+    return {
+      ...data,
+      value: Number(data.value) + 1, // Add 1 to each value
+    };
+  });
+  let xmlString = '<?xml version="1.0" encoding="UTF-8"?><Root>';
+  parsedData.forEach((data) => {
+    xmlString += `
+                  <Parameters>
+                  <Index>${data.index}</Index>
+                  <Parameter>${data.parameter}</Parameter>
+                  <Value>${data.value}</Value>
+                  </Parameters>
+                `;
+  });
+
+  xmlString += "</Root>";
+  const blob = new Blob([xmlString], { type: "application/xml" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "edited_data.xml";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 function checkSerialSupport() {
