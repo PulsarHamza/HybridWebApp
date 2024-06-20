@@ -322,7 +322,7 @@ function settings_clear() {
 }
 
 function trace_start() {
-  if (login_stage == 3 && isDisconnecting == 0 && isTraceOn == 0 && presysState == 2) {
+  if (login_stage == 3 && isDisconnecting == 0 && isTraceOn == 0 && (presysState == 2 || presysState == 3)) {
     tids_trace_reset();
     // settings_clear();
     document.getElementById("btn_trace").innerHTML = lang_map[8]; //'TRACE OFF';
@@ -2867,6 +2867,39 @@ function getDeviceInfo() {
   const browser = navigator.userAgent;
   const deviceInfo = `OS: ${os}, Browser: ${browser}`;
 }
+function table_update(parsedData) {
+  document.getElementById("myTable").style.display = "block";
+  var tableBody = document.getElementById("tableBody");
+
+  // Clear existing rows
+  tableBody.innerHTML = "";
+
+  for (var i = 0; i < parsedData.length; i++) {
+    var row = tableBody.insertRow();
+
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+
+    cell1.textContent = parsedData[i].parameter;
+    cell2.textContent = parsedData[i].value;
+
+    // Applying styles to cells programmatically
+    row.style.borderTop = "1px solid black";
+    row.style.borderBottom = "1px solid black";
+
+    const cells = [cell1, cell2];
+    cells.forEach((cell) => {
+      cell.style.borderRight = "1px solid black";
+      cell.style.textAlign = "center";
+      cell.style.fontFamily = "'Segoe UI SemiBold'";
+      cell.style.fontSize = "24pt";
+      cell.style.fontWeight = "500";
+      cell.style.width = "431px";
+      cell.style.height = "80px";
+    });
+  }
+}
+
 // Function to get data from a file
 async function openXML() {
   const fileInput = document.createElement("input");
@@ -2881,6 +2914,8 @@ async function openXML() {
       xml_loaded = true;
       const xmlString = e.target.result;
       const parsedData = parseXML(xmlString);
+      document.getElementById("next-arrow").style.display = "block";
+      table_update(parsedData);
       const firstSet = createUint8Array(parsedData, 0, 60); // First 60 parameters
       const secondSet = createUint8Array(parsedData, 60, 60); // Second 60 parameters
       const remainingSet = createUint8Array(parsedData, 120, 37); // Remaining parameters up to 157
@@ -2991,18 +3026,28 @@ function edit_XML() {
       value: Number(data.value) + 1, // Add 1 to each value
     };
   });
+  saveXML();
+}
+// Function to convert parsed data back to XML string
+function convertDataToXML(parsedData) {
   let xmlString = '<?xml version="1.0" encoding="UTF-8"?><Root>';
+
   parsedData.forEach((data) => {
     xmlString += `
-                  <Parameters>
-                  <Index>${data.index}</Index>
-                  <Parameter>${data.parameter}</Parameter>
-                  <Value>${data.value}</Value>
-                  </Parameters>
+                    <Parameters>
+                        <Index>${data.index}</Index>
+                        <Parameter>${data.parameter}</Parameter>
+                        <Value>${data.value}</Value>
+                    </Parameters>
                 `;
   });
 
   xmlString += "</Root>";
+  return xmlString;
+}
+// Function to save XML data to a file
+function saveXML() {
+  xmlString = convertDataToXML(parsedData);
   const blob = new Blob([xmlString], { type: "application/xml" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
@@ -3011,6 +3056,13 @@ function edit_XML() {
   link.click();
   document.body.removeChild(link);
 }
+// function displayContent(contentId) {
+//   const sections = document.querySelectorAll(".content-section");
+//   sections.forEach((section) => {
+//     section.classList.remove("accordion-active");
+//   });
+//   document.getElementById(contentId).classList.add("accordion-active");
+// }
 
 function checkSerialSupport() {
   if (!("serial" in navigator)) {
@@ -3030,6 +3082,7 @@ document.addEventListener("DOMContentLoaded", function () //this is what happens
 {
   getDeviceInfo();
   checkSerialSupport();
+  document.getElementById("myTable").style.display = "none";
   connectionType = localStorage.getItem("connectionType");
   if ("serial" in navigator && connectionType === "serial") {
     document.getElementById("connectionImage").src = "img/usb-disconnected.svg";
