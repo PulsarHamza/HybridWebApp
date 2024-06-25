@@ -1,4 +1,4 @@
-function defaultXML_edit(liveParamDataView) {
+function defaultXML_edit() {
   const xmlFilePath = "./xml/reflect-e_0.1.7_default.xml";
 
   fetch(xmlFilePath)
