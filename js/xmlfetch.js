@@ -4,19 +4,18 @@ function defaultXML_edit() {
   fetch(xmlFilePath)
     .then((response) => {
       if (!response.ok) {
-        alert("Error");
+        alert("Error fetching XML file.");
         throw new Error("Network response was not ok");
       }
       return response.text();
     })
     .then((xmlText) => {
-      alert("HERE1");
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 
       const parametersList = xmlDoc.getElementsByTagName("Parameters");
 
-      // Update existing parameters with values from dataView
+      // Update existing parameters with values from liveParamDataView
       for (let i = 0; i < liveParamDataView.length; i++) {
         const { index, value } = liveParamDataView[i];
         const parameterNode = Array.from(parametersList).find(
@@ -29,30 +28,44 @@ function defaultXML_edit() {
           console.warn(`Index ${index} not found in XML.`);
         }
       }
-      alert("HERE2");
+
       // Convert XML back to text
       const serializer = new XMLSerializer();
       const updatedXmlText = serializer.serializeToString(xmlDoc);
 
       // Download the updated XML file
-      downloadFile(updatedXmlText, "updated_xml.xml", "text/xml");
+      downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
     })
     .catch((error) => {
-      alert(`There was a problem with the fetch operation:`, error);
+      alert(`There was a problem with the fetch operation: ${error.message}`);
     });
 }
 
-// Function to download file
 function downloadFile(data, filename, type) {
   const blob = new Blob([data], { type: type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
+
+  // Check if the browser supports the 'download' attribute
+  if ("download" in document.createElement("a")) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
     document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-  }, 0);
+    URL.revokeObjectURL(url);
+  } else {
+    // Fallback for browsers that do not support 'download' attribute
+    const fileReader = new FileReader();
+    fileReader.onload = function (event) {
+      const link = document.createElement("a");
+      link.href = event.target.result;
+      link.target = "_blank";
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    fileReader.readAsDataURL(blob);
+  }
 }
