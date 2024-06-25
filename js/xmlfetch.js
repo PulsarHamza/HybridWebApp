@@ -22,7 +22,7 @@ function defaultXML_edit() {
         );
 
         if (parameterNode) {
-          parameterNode.getElementsByTagName("Value")[0].textContent = value.toString();
+          parameterNode.getElementsByTagName("Value")[0].textContent = parseFloat(value).toFixed(3).toString();
         } else {
           console.warn(`Index ${index} not found in XML.`);
         }
