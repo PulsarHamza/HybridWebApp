@@ -4,11 +4,13 @@ function defaultXML_edit() {
   fetch(xmlFilePath)
     .then((response) => {
       if (!response.ok) {
+        alert("Error");
         throw new Error("Network response was not ok");
       }
       return response.text();
     })
     .then((xmlText) => {
+      alert("HERE1");
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 
@@ -27,18 +29,16 @@ function defaultXML_edit() {
           console.warn(`Index ${index} not found in XML.`);
         }
       }
-
+      alert("HERE2");
       // Convert XML back to text
       const serializer = new XMLSerializer();
       const updatedXmlText = serializer.serializeToString(xmlDoc);
-
-      alert("Downloading!");
 
       // Download the updated XML file
       downloadFile(updatedXmlText, "updated_xml.xml", "text/xml");
     })
     .catch((error) => {
-      console.error(`There was a problem with the fetch operation:`, error);
+      alert(`There was a problem with the fetch operation:`, error);
     });
 }
 
