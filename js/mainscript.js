@@ -169,6 +169,7 @@ let combined_remainingSet;
 let parsedData = [];
 let xml_loaded = false;
 let local_xml_livedata = "";
+let liveParamDataView = [];
 
 // Resetting all the variables
 function reset_params() {
@@ -864,7 +865,9 @@ function getVal(i) {
 }
 
 function param_verify(i) {
-  switch (param_num[offset * 60 + i]) {
+  let calculatedIndex = offset * 60 + i;
+  liveParamDataView.push({ index: calculatedIndex, value: getVal(i) });
+  switch (param_num[calculatedIndex]) {
     case 241:
       document.getElementById("p241List").value = parseInt(getVal(i)) + 1;
       //console.log(document.getElementById('p241List').value);
@@ -1061,7 +1064,6 @@ function Uint8tohex(incoming_data) {
     myChart.config.options.scales.x.title.text = p104_units;
     myChart.update();
   } else if (doc_value == "SENDPART1") {
-    //(((doc_value == "SENDPART1") && (button_press == 8)) || (button_press == 16))
     offset = 0;
     for (let i = 0; i < 60; i++) {
       param_verify(i);
@@ -1084,6 +1086,7 @@ function Uint8tohex(incoming_data) {
       param_verify(i);
     }
     //console.log("Got Part3");
+
     echo_start();
   }
   return a;
@@ -1523,6 +1526,7 @@ function interpretHex(incoming_data) {
     }
     //console.log("Got Part3");
     //downloadXML(local_xml_livedata);
+    //console.log(liveParamDataView);
     echo_start();
   }
   return a;
@@ -3053,19 +3057,6 @@ function createUint8Array(parsedData, start, count) {
 
   return uint8Array;
 }
-// Function to edit XML data and save to a file
-function edit_XML() {
-  if (!xml_loaded) {
-    return;
-  }
-  parsedData = parsedData.map((data) => {
-    return {
-      ...data,
-      value: Number(data.value) + 1, // Add 1 to each value
-    };
-  });
-  saveXML();
-}
 // Function to convert parsed data back to XML string
 function convertDataToXML(parsedData) {
   let xmlString = '<?xml version="1.0" encoding="UTF-8"?><Root>';
@@ -3134,7 +3125,6 @@ document.addEventListener("DOMContentLoaded", function () //this is what happens
     document.getElementById("bt_range").style.display = "block";
     document.getElementById("reflecte_devinfo").style.display = "none";
   }
-  local_xml_livedata = live_xmlData;
   //document.getElementById('reflecte_devinfo').style.display= "none";
 });
 

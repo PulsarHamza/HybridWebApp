@@ -1,31 +1,56 @@
-fetch("./xml/reflect-e_0.1.7_default.xml")
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.text();
-  })
-  .then((xmlText) => {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+function defaultXML_edit(liveParamDataView) {
+  const xmlFilePath = "./xml/reflect-e_0.1.7_default.xml";
 
-    const parametersList = xmlDoc.getElementsByTagName("Parameters");
-    const parsedData = [];
-    const indexSet = new Set();
-
-    for (let i = 0; i < parametersList.length; i++) {
-      const parameters = parametersList[i];
-      const index = parameters.getElementsByTagName("Index")[0].textContent;
-      if (indexSet.has(index)) {
-        continue; // Skip if index already exists
+  fetch(xmlFilePath)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-      const parameter = parameters.getElementsByTagName("Parameter")[0].textContent;
-      const value = parameters.getElementsByTagName("Value")[0].textContent;
-      indexSet.add(index); // Add index to set to track uniqueness
-      parsedData.push({ index, parameter, value }); // Store parsed data
-    }
-    console.log(parsedData); // Output the parsed data
-  })
-  .catch((error) => {
-    console.error(`There was a problem with the fetch operation:`, error);
-  });
+      return response.text();
+    })
+    .then((xmlText) => {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+
+      const parametersList = xmlDoc.getElementsByTagName("Parameters");
+
+      // Update existing parameters with values from dataView
+      for (let i = 0; i < liveParamDataView.length; i++) {
+        const { index, value } = liveParamDataView[i];
+        const parameterNode = Array.from(parametersList).find(
+          (node) => node.getElementsByTagName("Index")[0].textContent === index.toString()
+        );
+
+        if (parameterNode) {
+          parameterNode.getElementsByTagName("Value")[0].textContent = value.toString();
+        } else {
+          console.warn(`Index ${index} not found in XML.`);
+        }
+      }
+
+      // Convert XML back to text
+      const serializer = new XMLSerializer();
+      const updatedXmlText = serializer.serializeToString(xmlDoc);
+
+      // Download the updated XML file
+      downloadFile(updatedXmlText, "updated_xml.xml", "text/xml");
+    })
+    .catch((error) => {
+      console.error(`There was a problem with the fetch operation:`, error);
+    });
+}
+
+// Function to download file
+function downloadFile(data, filename, type) {
+  const blob = new Blob([data], { type: type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }, 0);
+}
