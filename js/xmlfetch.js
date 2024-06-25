@@ -24,7 +24,7 @@ fetch("./xml/reflect-e_0.1.7_default.xml")
       indexSet.add(index); // Add index to set to track uniqueness
       parsedData.push({ index, parameter, value }); // Store parsed data
     }
-    alert("Successful"); // Output the parsed data
+    console.log(parsedData); // Output the parsed data
   })
   .catch((error) => {
     console.error(`There was a problem with the fetch operation:`, error);
