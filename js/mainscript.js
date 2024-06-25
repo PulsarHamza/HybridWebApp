@@ -168,6 +168,7 @@ let combined_secondSet;
 let combined_remainingSet;
 let parsedData = [];
 let xml_loaded = false;
+let local_xml_livedata = "";
 
 // Resetting all the variables
 function reset_params() {
@@ -849,6 +850,7 @@ function getVal(i) {
       .slice(startIndex, startIndex + 4)
       .map((byte) => byte.toString(16).padStart(2, "0"))
       .join("");
+    //console.log(i, hexToFloat("0x" + hexValue));
     return hexToFloat("0x" + hexValue);
   } else if (connectionType === "bluetooth") {
     return hexToFloat(
@@ -1496,8 +1498,8 @@ function interpretHex(incoming_data) {
     myChart.update();
   } else if (doc_value == "SENDPART1") {
     offset = 0;
+    //local_xml_livedata = updateXMLPart(local_xml_livedata, 0, 60);
     for (let i = 0; i < 60; i++) {
-      //getVal(i);
       param_verify(i);
     }
     //console.log("Got Part1");
@@ -1505,7 +1507,9 @@ function interpretHex(incoming_data) {
     param_set2_tid = setInterval(param_set2_start, 5000);
   } else if (doc_value == "SENDPART2") {
     offset = 1;
+    //local_xml_livedata = updateXMLPart(local_xml_livedata, 60, 60);
     for (let i = 0; i < 60; i++) {
+      //local_xml_livedata = update_liveXML(local_xml_livedata, i, getVal(i));
       param_verify(i);
     }
     //console.log("Got Part2");
@@ -1513,13 +1517,47 @@ function interpretHex(incoming_data) {
     param_set3_tid = setInterval(param_set3_start, 5000);
   } else if (doc_value == "SENDPART3") {
     offset = 2;
+    //local_xml_livedata = updateXMLPart(local_xml_livedata, 120, 37);
     for (let i = 0; i < param_info.length - offset * 60; i++) {
       param_verify(i);
     }
     //console.log("Got Part3");
+    //downloadXML(local_xml_livedata);
     echo_start();
   }
   return a;
+}
+function update_liveXML(xmlString, i, newValue) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+
+  const parameters = xmlDoc.getElementsByTagName("Parameters")[0].children;
+
+  if (i < parameters.length) {
+    const parameter = parameters[i];
+    const valueElement = parameter.getElementsByTagName("Value")[0];
+    valueElement.textContent = newValue;
+  }
+
+  const serializer = new XMLSerializer();
+  return serializer.serializeToString(xmlDoc);
+}
+function updateXMLPart(xmlString, start, count) {
+  let modifiedXML = xmlString;
+  for (let i = start; i < start + count; i++) {
+    const newValue = getVal(i);
+    modifiedXML = update_liveXML(modifiedXML, i, newValue);
+  }
+  return modifiedXML;
+}
+function downloadXML(xmlString) {
+  const blob = new Blob([xmlString], { type: "application/xml" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "test1.xml";
+  a.click();
+  URL.revokeObjectURL(url);
 }
 // Function to convert unsigned int 8 bit format to hex and relevant functions within it
 function Uint8tohex_test(incoming_data) {
@@ -3096,6 +3134,7 @@ document.addEventListener("DOMContentLoaded", function () //this is what happens
     document.getElementById("bt_range").style.display = "block";
     document.getElementById("reflecte_devinfo").style.display = "none";
   }
+  local_xml_livedata = live_xmlData;
   //document.getElementById('reflecte_devinfo').style.display= "none";
 });
 
