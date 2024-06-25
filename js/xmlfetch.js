@@ -22,7 +22,7 @@ function defaultXML_edit() {
         );
 
         if (parameterNode) {
-          parameterNode.getElementsByTagName("Value")[0].textContent = parseFloat(value).toFixed(3).toString();
+          parameterNode.getElementsByTagName("Value")[0].textContent = Number(value).toFixed(3).toString();
         } else {
           console.warn(`Index ${index} not found in XML.`);
         }
@@ -31,6 +31,8 @@ function defaultXML_edit() {
       // Convert XML back to text
       const serializer = new XMLSerializer();
       const updatedXmlText = serializer.serializeToString(xmlDoc);
+
+      alert("Downloading!");
 
       // Download the updated XML file
       downloadFile(updatedXmlText, "updated_xml.xml", "text/xml");
