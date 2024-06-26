@@ -43,6 +43,16 @@ self.addEventListener("install", (e) => {
         "./js/xmlfetch.js",
         "./img/pulsaricon-rgb64_2.png",
         "./img/pulsarlogo.svg",
+        "./img/bluetooth-active.svg",
+        "./img/bluetooth-disabled.svg",
+        "./img/bluetooth-disconnected-svgrepo-com.svg",
+        "./img/Bluetooth.svg",
+        "./img/Icon256Reflect_new.png",
+        "./img/Picture1.png",
+        "./img/pulsaricon-rgb64_2.png",
+        "./img/usb-connected.svg",
+        "./img/usb-disconnected.svg",
+        "./img/USB.svg",
         "./img/tank1.png",
       ]);
     })
