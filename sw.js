@@ -40,6 +40,7 @@ self.addEventListener("install", (e) => {
         "./js/script-lr2.js",
         "./js/slider.js",
         "./js/mainscript.js",
+        "./js/xmlfetch.js",
         "./img/pulsaricon-rgb64_2.png",
         "./img/pulsarlogo.svg",
         "./img/tank1.png",
