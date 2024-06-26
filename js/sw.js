@@ -2,9 +2,7 @@ self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open("web-app-offline").then(function (cache) {
       return cache.addAll([
-        "./",
         "./index.html",
-        "./js/index.js",
         "./js/sw.js",
         "./css/element.css",
         "./css/font-awesome.min.css",
