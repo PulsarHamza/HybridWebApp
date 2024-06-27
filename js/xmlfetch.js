@@ -23,8 +23,12 @@ function fetchedit_defaultXML() {
       // Convert XML back to text
       const serializer = new XMLSerializer();
       const updatedXmlText = serializer.serializeToString(xmlDoc);
-      //if (deviceInfo.includes("Bluefy")) {
-      copyToClipboard(updatedXmlText);
+
+      // Display updated XML content in textarea
+      document.getElementById("xmlContent").value = updatedXmlText;
+
+      // Copy the updated XML content to clipboard
+      copyToClipboard();
       //} else {
       downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
       //}
@@ -51,9 +55,10 @@ function downloadFile(data, filename, type) {
   }
 }
 // Function to copy text to clipboard
-function copyToClipboard(text) {
+function copyToClipboard() {
+  const xmlContent = document.getElementById("xmlContent").value;
   navigator.clipboard
-    .writeText(text)
+    .writeText(xmlContent)
     .then(() => {
       alert("XML content copied to clipboard");
     })
