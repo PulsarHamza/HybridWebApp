@@ -35,7 +35,7 @@ function downloadFile(data, filename, type) {
   const blob = new Blob([data], { type: type });
 
   // Check if the browser supports the 'download' attribute
-  if ("download" in document.createElement("a")) {
+  if ("download" in document.createElement("a") && !deviceInfo.includes("Bluefy")) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -44,5 +44,15 @@ function downloadFile(data, filename, type) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  } else if (deviceInfo.includes("Bluefy")) {
+    navigator.clipboard
+      .writeText(data)
+      .then(() => {
+        alert("XML content copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+        alert("Failed to copy XML content");
+      });
   }
 }
