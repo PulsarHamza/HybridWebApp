@@ -2909,6 +2909,7 @@ function getDeviceInfo() {
   if (userAgent.indexOf("Linux") != -1) os = "Linux";
   const browser = navigator.userAgent;
   deviceInfo = `OS: ${os}, Browser: ${browser}`;
+  alert(deviceInfo);
 }
 function table_update(parsedData) {
   document.getElementById("myTable").style.display = "block";
