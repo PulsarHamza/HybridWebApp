@@ -1405,18 +1405,6 @@
 	</Parameters>
 	<Parameters>
 		<Index>117</Index>
-		<Parameter>645</Parameter>
-		<Read_Write>RD_WR</Read_Write>
-		<Units>U_M_DEG_C</Units>
-		<Min>0</Min>
-		<Max>1E6</Max>
-		<Default>0.606</Default>
-		<Value>0.606</Value>
-		<Calibration_value>0</Calibration_value>
-		<Display_value>0.606</Display_value>
-	</Parameters>
-	<Parameters>
-		<Index>118</Index>
 		<Parameter>696</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_NO</Units>
@@ -1428,7 +1416,7 @@
 		<Display_value>0</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>119</Index>
+		<Index>118</Index>
 		<Parameter>808</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_NO</Units>
@@ -1440,7 +1428,7 @@
 		<Display_value>1</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>120</Index>
+		<Index>119</Index>
 		<Parameter>809</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_MN</Units>
@@ -1452,7 +1440,7 @@
 		<Display_value>2.0</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>121</Index>
+		<Index>120</Index>
 		<Parameter>834</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_MU</Units>
@@ -1464,7 +1452,7 @@
 		<Display_value>0</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>122</Index>
+		<Index>121</Index>
 		<Parameter>835</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_MU</Units>
@@ -1476,7 +1464,7 @@
 		<Display_value>7.925</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>123</Index>
+		<Index>122</Index>
 		<Parameter>841</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_NO</Units>
@@ -1488,7 +1476,7 @@
 		<Display_value>5</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>124</Index>
+		<Index>123</Index>
 		<Parameter>852</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_NO</Units>
@@ -1500,7 +1488,7 @@
 		<Display_value>1</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>125</Index>
+		<Index>124</Index>
 		<Parameter>854</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_TP</Units>
@@ -1512,7 +1500,7 @@
 		<Display_value>20</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>126</Index>
+		<Index>125</Index>
 		<Parameter>860</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_NO</Units>
@@ -1524,7 +1512,7 @@
 		<Display_value>85</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>127</Index>
+		<Index>126</Index>
 		<Parameter>870</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_MU</Units>
@@ -1536,7 +1524,7 @@
 		<Display_value>10.0</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>128</Index>
+		<Index>127</Index>
 		<Parameter>871</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_MU</Units>
@@ -1548,7 +1536,7 @@
 		<Display_value>10.0</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>129</Index>
+		<Index>128</Index>
 		<Parameter>881</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_MU</Units>
@@ -1560,7 +1548,7 @@
 		<Display_value>0.15</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>130</Index>
+		<Index>129</Index>
 		<Parameter>884</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_PC</Units>
@@ -1572,7 +1560,7 @@
 		<Display_value>50</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>131</Index>
+		<Index>130</Index>
 		<Parameter>905</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_MV</Units>
@@ -1584,7 +1572,7 @@
 		<Display_value>80</Display_value>
 	</Parameters>
 	<Parameters>
-		<Index>132</Index>
+		<Index>131</Index>
 		<Parameter>906</Parameter>
 		<Read_Write>RD_WR</Read_Write>
 		<Units>U_MU</Units>
@@ -1594,6 +1582,18 @@
 		<Value>0.050</Value>
 		<Calibration_value>0</Calibration_value>
 		<Display_value>0.050</Display_value>
+	</Parameters>
+		<Parameters>
+		<Index>132</Index>
+		<Parameter>926</Parameter>
+		<Read_Write>RD_ON</Read_Write>
+		<Units>U_NO</Units>
+		<Min>0</Min>
+		<Max>1E6</Max>
+		<Default>53</Default>
+		<Value>53</Value>
+		<Calibration_value>0</Calibration_value>
+		<Display_value>53</Display_value>
 	</Parameters>
 	<Parameters>
 		<Index>133</Index>
