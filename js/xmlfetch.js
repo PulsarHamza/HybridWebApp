@@ -45,14 +45,17 @@ function downloadFile(data, filename, type) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   } else if (deviceInfo.includes("Bluefy")) {
-    navigator.clipboard
-      .writeText(data)
-      .then(() => {
-        alert("XML content copied to clipboard!");
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
-        alert("Failed to copy XML content");
-      });
+    // Convert the Blob to text
+    blob.text().then((text) => {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          alert("XML content copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy text: ", err);
+          alert("Failed to copy XML content");
+        });
+    });
   }
 }
