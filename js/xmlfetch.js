@@ -1,14 +1,6 @@
-function defaultXML_edit() {
-  const xmlFilePath = "./xml/reflect-e_0.1.7_default.xml";
-
-  fetch(xmlFilePath)
-    .then((response) => {
-      if (!response.ok) {
-        alert("Error fetching XML file.");
-        throw new Error("Network response was not ok");
-      }
-      return response.text();
-    })
+function fetchedit_defaultXML() {
+  fetch("./xml/reflect-e_0.1.7_default.xml")
+    .then((response) => response.text())
     .then((xmlText) => {
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlText, "text/xml");
@@ -28,16 +20,14 @@ function defaultXML_edit() {
           console.warn(`Index ${index} not found in XML.`);
         }
       }
-
       // Convert XML back to text
       const serializer = new XMLSerializer();
       const updatedXmlText = serializer.serializeToString(xmlDoc);
-
-      // Download the updated XML file
       downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
     })
     .catch((error) => {
-      alert(`There was a problem with the fetch operation: ${error.message}`);
+      console.error("Error fetching XML:", error);
+      alert("Error fetching XML");
     });
 }
 
@@ -54,18 +44,5 @@ function downloadFile(data, filename, type) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  } else {
-    // Fallback for browsers that do not support 'download' attribute
-    const fileReader = new FileReader();
-    fileReader.onload = function (event) {
-      const link = document.createElement("a");
-      link.href = event.target.result;
-      link.target = "_blank";
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-    fileReader.readAsDataURL(blob);
   }
 }

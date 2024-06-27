@@ -56,6 +56,7 @@ self.addEventListener("install", (e) => {
         "./img/usb-disconnected.svg",
         "./img/USB.svg",
         "./img/tank1.png",
+        "./xml/reflect-e_0.1.7_default.xml",
       ]);
     })
   );
@@ -64,4 +65,9 @@ self.addEventListener("install", (e) => {
 self.addEventListener("fetch", (e) => {
   console.log(e.request.url);
   e.respondWith(caches.match(e.request).then((response) => response || fetch(e.request)));
+});
+
+self.addEventListener("activate", () => {
+  self.console.log("sw activate");
+  clients.claim();
 });

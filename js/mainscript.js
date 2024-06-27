@@ -170,6 +170,7 @@ let parsedData = [];
 let xml_loaded = false;
 let local_xml_livedata = "";
 let liveParamDataView = [];
+let deviceInfo;
 
 // Resetting all the variables
 function reset_params() {
@@ -2907,7 +2908,7 @@ function getDeviceInfo() {
   if (userAgent.indexOf("X11") != -1) os = "UNIX";
   if (userAgent.indexOf("Linux") != -1) os = "Linux";
   const browser = navigator.userAgent;
-  const deviceInfo = `OS: ${os}, Browser: ${browser}`;
+  deviceInfo = `OS: ${os}, Browser: ${browser}`;
 }
 function table_update(parsedData) {
   document.getElementById("myTable").style.display = "block";
