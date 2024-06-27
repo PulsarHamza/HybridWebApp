@@ -28,7 +28,7 @@ function fetchedit_defaultXML() {
       document.getElementById("xmlContent").value = updatedXmlText;
 
       // Copy the updated XML content to clipboard
-      copyToClipboard();
+      copy();
       //} else {
       downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
       //}
@@ -55,8 +55,10 @@ function downloadFile(data, filename, type) {
   }
 }
 // Function to copy text to clipboard
-function copyToClipboard() {
-  const xmlContent = document.getElementById("xmlContent").value;
+function copy() {
+  let xmlContent = "";
+  xmlContent = document.getElementById("xmlContent").value;
+  window.copyToClipboard(xmlContent);
   navigator.clipboard
     .writeText(xmlContent)
     .then(() => {
