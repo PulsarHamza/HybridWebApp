@@ -2998,7 +2998,6 @@ async function send_paramset() {
 function parseXML(xmlString) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-
   const parametersList = xmlDoc.getElementsByTagName("Parameters");
   parsedData = [];
   const indexSet = new Set();
@@ -3029,6 +3028,7 @@ function parseXML(xmlString) {
 
     indexSet.add(index); // Add index to set to track uniqueness
   }
+  saveXML();
   return parsedData;
 }
 

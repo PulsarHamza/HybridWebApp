@@ -23,11 +23,11 @@ function fetchedit_defaultXML() {
       // Convert XML back to text
       const serializer = new XMLSerializer();
       const updatedXmlText = serializer.serializeToString(xmlDoc);
-      if (deviceInfo.includes("Bluefy")) {
-        copyToClipboard(updatedXmlText);
-      } else {
-        downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
-      }
+      //if (deviceInfo.includes("Bluefy")) {
+      copyToClipboard(updatedXmlText);
+      //} else {
+      downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
+      //}
     })
     .catch((error) => {
       console.error("Error fetching XML:", error);
