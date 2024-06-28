@@ -1793,7 +1793,7 @@ async function incomingData(event) {
       closeForm();
       if (isDisconnecting == 0) {
         log(lang_map[69]); //log(" ← Connected");
-        document.getElementById("connectionImage").src = "img/bluetooth-active.svg";
+        document.getElementById("connectionImage").src = "img/new_bt_connected-cropped.svg";
         var elements = document.querySelectorAll("button[type=button]");
         for (var i = 0, len = elements.length; i < len; i++)
           document.getElementById(elements[i].id).style.background = "#33B34A"; //PULSAR GREEN
@@ -2118,7 +2118,7 @@ async function sendTX(data, isHex = false) {
 function toggle_connection_type() {
   if (connectionType === "serial") {
     connectionType = "bluetooth";
-    document.getElementById("connectionImage").src = "img/bluetooth-disabled.svg";
+    document.getElementById("connectionImage").src = "img/new_bt_disconnected-cropped.svg";
     //document.querySelector('.static_image img').src = "img/tank1.png";
     document.getElementById("bt_range").style.display = "block";
     document.getElementById("reflecte_devinfo").style.display = "none";
@@ -3118,7 +3118,7 @@ document.addEventListener("DOMContentLoaded", function () //this is what happens
     document.getElementById("reflecte_devinfo").style.display = "block";
   } else {
     connectionType = "bluetooth";
-    document.getElementById("connectionImage").src = "img/bluetooth-disabled.svg";
+    document.getElementById("connectionImage").src = "img/new_bt_disconnected-cropped.svg";
     document.getElementById("connectionImage").style.display = "block";
     document.getElementById("bt_range").style.display = "block";
     document.getElementById("reflecte_devinfo").style.display = "none";

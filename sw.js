@@ -55,6 +55,8 @@ self.addEventListener("install", (e) => {
         "./img/usb-connected.svg",
         "./img/usb-disconnected.svg",
         "./img/USB.svg",
+        "./img/new_bt_disconnected-cropped.svg",
+        "./img/new_bt_connected-cropped.svg",
         "./img/tank1.png",
         "./xml/reflect-e_0.1.7_default.xml",
       ]);
