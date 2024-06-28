@@ -28,11 +28,11 @@ function fetchedit_defaultXML() {
       document.getElementById("xmlContent").value = updatedXmlText;
 
       // Copy the updated XML content to clipboard
-      if (deviceInfo.includes("Bluefy")) {
-        Clipboard.copy("text to be copied");
-      } else {
-        downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
-      }
+      //if (deviceInfo.includes("Bluefy")) {
+      copyText("text to be copied");
+      //} else {
+      downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
+      //}
     })
     .catch((error) => {
       console.error("Error fetching XML:", error);
@@ -56,46 +56,24 @@ function downloadFile(data, filename, type) {
   }
 }
 
-window.Clipboard = (function (window, document, navigator) {
-  var textArea, copy;
+function copyText() {
+  var input = document.querySelector("#xmlContent");
 
-  function isOS() {
-    return navigator.userAgent.match(/ipad|iphone/i);
+  if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+    // handle iOS devices
+    input.contenteditable = true;
+    input.readonly = false;
+
+    var range = document.createRange();
+    range.selectNodeContents(input);
+
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    input.setSelectionRange(0, 999999);
+  } else {
+    // other devices are easy
+    input.select();
   }
-
-  function createTextArea(text) {
-    textArea = document.createElement("textArea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
-  }
-
-  function selectText() {
-    var range, selection;
-
-    if (isOS()) {
-      range = document.createRange();
-      range.selectNodeContents(textArea);
-      selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-      textArea.setSelectionRange(0, 999999);
-    } else {
-      textArea.select();
-    }
-  }
-
-  function copyToClipboard() {
-    document.execCommand("copy");
-    document.body.removeChild(textArea);
-  }
-
-  copy = function (text) {
-    createTextArea(text);
-    selectText();
-    copyToClipboard();
-  };
-
-  return {
-    copy: copy,
-  };
-})(window, document, navigator);
+  document.execCommand("copy");
+}
