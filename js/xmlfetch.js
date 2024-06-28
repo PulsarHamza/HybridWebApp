@@ -28,10 +28,11 @@ function fetchedit_defaultXML() {
       document.getElementById("xmlContent").value = updatedXmlText;
 
       // Copy the updated XML content to clipboard
-      selectAllText();
-      //} else {
-      downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
-      //}
+      if (deviceInfo.includes("Bluefy")) {
+        Clipboard.copy("text to be copied");
+      } else {
+        downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
+      }
     })
     .catch((error) => {
       console.error("Error fetching XML:", error);
@@ -54,22 +55,47 @@ function downloadFile(data, filename, type) {
     URL.revokeObjectURL(url);
   }
 }
-// Function to copy text to clipboard
-function selectAllText() {
-  const textarea = document.getElementById("xmlContent").value;
-  textarea.select();
-  textarea.setSelectionRange(0, textarea.value.length);
 
-  // Get selected text from textarea
-  const selectedText = textarea.value;
+window.Clipboard = (function (window, document, navigator) {
+  var textArea, copy;
 
-  navigator.clipboard
-    .writeText(selectedText)
-    .then(() => {
-      alert("XML content copied to clipboard");
-    })
-    .catch((err) => {
-      console.error("Failed to copy text: ", err);
-      alert("Failed to copy XML content");
-    });
-}
+  function isOS() {
+    return navigator.userAgent.match(/ipad|iphone/i);
+  }
+
+  function createTextArea(text) {
+    textArea = document.createElement("textArea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+  }
+
+  function selectText() {
+    var range, selection;
+
+    if (isOS()) {
+      range = document.createRange();
+      range.selectNodeContents(textArea);
+      selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      textArea.setSelectionRange(0, 999999);
+    } else {
+      textArea.select();
+    }
+  }
+
+  function copyToClipboard() {
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+  }
+
+  copy = function (text) {
+    createTextArea(text);
+    selectText();
+    copyToClipboard();
+  };
+
+  return {
+    copy: copy,
+  };
+})(window, document, navigator);
