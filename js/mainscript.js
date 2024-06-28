@@ -576,7 +576,6 @@ function p605_start() {
     tids_trace_reset();
   }
 }
-
 function param_set1_start() {
   if (login_stage == 4) {
     //clearTimeout(p605_tid);
@@ -1087,8 +1086,11 @@ function Uint8tohex(incoming_data) {
       param_verify(i);
     }
     //console.log("Got Part3");
-
-    echo_start();
+    if (c_state == 3 && login_stage >= 3 && isDisconnecting == 0) {
+      tids_trace_reset();
+    } else {
+      echo_start();
+    }
   }
   return a;
 }
@@ -1502,33 +1504,28 @@ function interpretHex(incoming_data) {
     myChart.update();
   } else if (doc_value == "SENDPART1") {
     offset = 0;
-    //local_xml_livedata = updateXMLPart(local_xml_livedata, 0, 60);
     for (let i = 0; i < 60; i++) {
       param_verify(i);
     }
-    //console.log("Got Part1");
     param_set2_start();
     param_set2_tid = setInterval(param_set2_start, 5000);
   } else if (doc_value == "SENDPART2") {
     offset = 1;
-    //local_xml_livedata = updateXMLPart(local_xml_livedata, 60, 60);
     for (let i = 0; i < 60; i++) {
-      //local_xml_livedata = update_liveXML(local_xml_livedata, i, getVal(i));
       param_verify(i);
     }
-    //console.log("Got Part2");
     param_set3_start();
     param_set3_tid = setInterval(param_set3_start, 5000);
   } else if (doc_value == "SENDPART3") {
     offset = 2;
-    //local_xml_livedata = updateXMLPart(local_xml_livedata, 120, 37);
     for (let i = 0; i < param_info.length - offset * 60; i++) {
       param_verify(i);
     }
-    //console.log("Got Part3");
-    //downloadXML(local_xml_livedata);
-    //console.log(liveParamDataView);
-    echo_start();
+    if (c_state == 3 && login_stage >= 3 && isDisconnecting == 0) {
+      tids_trace_reset();
+    } else {
+      echo_start();
+    }
   }
   return a;
 }
