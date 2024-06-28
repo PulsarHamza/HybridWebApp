@@ -28,11 +28,12 @@ function fetchedit_defaultXML() {
       document.getElementById("xmlContent").value = updatedXmlText;
 
       // Copy the updated XML content to clipboard
-      //if (deviceInfo.includes("Bluefy")) {
-      copyText("text to be copied");
-      //} else {
-      downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
-      //}
+      if (deviceInfo.includes("Bluefy")) {
+        document.getElementById("xmlContent").style.display = "block";
+        copyText("text to be copied");
+      } else {
+        downloadFile(updatedXmlText, "reflect-e_0.1.7_live.xml", "text/xml");
+      }
     })
     .catch((error) => {
       console.error("Error fetching XML:", error);

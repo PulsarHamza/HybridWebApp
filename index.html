@@ -89,10 +89,10 @@
       </button>
       <button class="accordion-tab" data-actab-group="0" data-actab-id="3" id="id_test"
         onclick="c_state=3;updateState(c_state);" style="display: none;">
-        TEST
+        ADVANCED
       </button>
       <button id="next-arrow" onclick="slideTabs(1)"
-        style="text-decoration: none;background-color: #f37021; color: white;padding: 5px 15px;border-radius: 5px;display: none; align-items: center;cursor: pointer;">
+        style="text-decoration: none;background-color: #f37021; color: white;padding: 5px 15px;border-radius: 5px; align-items: center;cursor: pointer;">
         <i class="fa fa-angle-right" style="font-size: 36px;"></i>
       </button>
     </section>
@@ -599,124 +599,6 @@
           </div>
           <!-- Introducing new element here-->
 
-          <div id="reflecte_devinfo" style="
-                top: -40%;
-                left: -20%;
-                width: 100%;
-                height: 100%;
-                border-style: solid;
-                border-width: 5px;
-                border-radius: 10px;
-                border-color: rgba(255, 255, 255, 0.952);
-              " align="center">
-            <tr>
-              <td>
-                <label id="reflecte_devinfo-label" class="label_default" style="
-                      font-family: 'Segoe UI Bold';
-                      font-size: 24pt;
-                      font-weight: bold;
-                      height: 50px;
-                      display: inline-block;
-                    ">REFLECT INFORMATION</label>
-              </td>
-            </tr>
-            <table style="width: 100%">
-              <tr>
-                <td>
-                  <label id="deviceInfo" class="label_default"
-                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">DEVICE
-                    INFO</label>
-                </td>
-                <td>
-                  <div id="deviceInfo-box" style="
-                        font-family: 'Segoe UI SemiBold';
-                        font-size: 24pt;
-                        font-weight: 500;
-                        width: 609.25px;
-                        height: 80px;
-                        border: 1px solid #ccc;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                      "></div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label id="reflecte_fwversion" class="label_default"
-                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">FW
-                    VERSION</label>
-                </td>
-                <td>
-                  <div id="reflecte_fwversion-box" style="
-                        font-family: 'Segoe UI SemiBold';
-                        font-size: 24pt;
-                        font-weight: 500;
-                        width: 609.25px;
-                        height: 80px;
-                        border: 1px solid #ccc;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                      "></div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label id="reflecte_access" class="label_default"
-                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">FW
-                    ACCESS</label>
-                </td>
-                <td>
-                  <div id="reflecte_access-box" style="
-                        font-family: 'Segoe UI SemiBold';
-                        font-size: 24pt;
-                        font-weight: 500;
-                        width: 609.25px;
-                        height: 80px;
-                        border: 1px solid #ccc;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                      "></div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label id="unite_info" class="label_default"
-                    style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">UNITE
-                    INFO</label>
-                </td>
-                <td>
-                  <div id="unite_info-box" style="
-                        font-family: 'Segoe UI SemiBold';
-                        font-size: 24pt;
-                        font-weight: 500;
-                        width: 609.25px;
-                        height: 80px;
-                        border: 1px solid #ccc;
-                        display: flex;
-                        align-items: center;
-                        justify-content: flex-end;
-                        padding-right: 20px;
-                      ">
-                    <a href="#" onclick="refreshUniteInfo()" style="
-                          text-decoration: none;
-                          background-color: #f37021; 
-                          color: white;
-                          padding: 5px 15px;
-                          border-radius: 5px;
-                          display: flex;
-                          align-items: center;
-                        ">
-                      <i class="fa fa-refresh" style="font-size: 36px; margin-right: 5px"></i>
-                    </a>
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-
           <!-- Introducing new element here-->
         </h4>
         <!-- IMPORTANT : donot remove this tag-->
@@ -944,22 +826,6 @@
                   </button>
                 </td>
               </tr>
-              <tr>
-                <td><button type="button" id="btnopenfile" class="button" onclick="openXML();">LOAD PARAM
-                    FILE XML</button>
-                </td>
-                <td></td>
-                <td><button type="button" id="editparamfile" class="button" onclick="fetchedit_defaultXML();">GENERATE
-                    PARAM
-                    FILE
-                    XML</button>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <textarea id="xmlContent" rows="10" cols="50"></textarea>
-                </td>
-              </tr>
             </table>
           </div>
         </div>
@@ -968,28 +834,159 @@
       <!-- </div> -->
       <article class="accordion-item" data-actab-group="0" data-actab-id="3" id="test">
         <h4 class="accordion-item__label">
-          <!--here-->
-          <td><button type="button" id="sendparamfile" class="button" onclick="send_paramset();">SEND PARAM
-              SETS</button>
-          </td>
-          <table id="myTable"
-            style="width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid black; overflow: scroll; height: 1202px;">
-            <thead style="text-align: center; width: 100%;">
+          <div style="width: 100%;">
+            <div id="reflecte_devinfo" style=" 
+                            top: -40%;
+                            left: -20%;
+                            width: 100%;
+                            height: 100%;
+                            border-style: solid;
+                            border-width: 5px;
+                            border-radius: 10px;
+                            border-color: rgba(255, 255, 255, 0.952);
+                          " align="center">
               <tr>
-                <th
-                  style="text-align: center;font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">
-                  PARAM NUMBER</th>
-                <th
-                  style="text-align: center;font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px">
-                  VALUE</th>
-                <!-- Add more headers if needed -->
+                <td>
+                  <label id="reflecte_devinfo-label" class="label_default" style="
+                                  font-family: 'Segoe UI Bold';
+                                  font-size: 24pt;
+                                  font-weight: bold;
+                                  height: 50px;
+                                  display: inline-block;
+                                ">REFLECT INFORMATION</label>
+                </td>
               </tr>
-            </thead>
-            <tbody id="tableBody" style="overflow: scroll;">
-              <!-- Rows will be inserted here -->
-            </tbody>
-          </table>
+              <table style="width: 100%">
+                <tr>
+                  <td>
+                    <label id="deviceInfo" class="label_default"
+                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">DEVICE
+                      INFO</label>
+                  </td>
+                  <td>
+                    <div id="deviceInfo-box" style="
+                                    font-family: 'Segoe UI SemiBold';
+                                    font-size: 24pt;
+                                    font-weight: 500;
+                                    width: 609.25px;
+                                    height: 80px;
+                                    border: 1px solid #ccc;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                  "></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label id="reflecte_fwversion" class="label_default"
+                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">FW
+                      VERSION</label>
+                  </td>
+                  <td>
+                    <div id="reflecte_fwversion-box" style="
+                                    font-family: 'Segoe UI SemiBold';
+                                    font-size: 24pt;
+                                    font-weight: 500;
+                                    width: 609.25px;
+                                    height: 80px;
+                                    border: 1px solid #ccc;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                  "></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label id="reflecte_access" class="label_default"
+                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">FW
+                      ACCESS</label>
+                  </td>
+                  <td>
+                    <div id="reflecte_access-box" style="
+                                    font-family: 'Segoe UI SemiBold';
+                                    font-size: 24pt;
+                                    font-weight: 500;
+                                    width: 609.25px;
+                                    height: 80px;
+                                    border: 1px solid #ccc;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                  "></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label id="unite_info" class="label_default"
+                      style="font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 180px; height: 80px">UNITE
+                      INFO</label>
+                  </td>
+                  <td>
+                    <div id="unite_info-box" style="
+                                    font-family: 'Segoe UI SemiBold';
+                                    font-size: 24pt;
+                                    font-weight: 500;
+                                    width: 609.25px;
+                                    height: 80px;
+                                    border: 1px solid #ccc;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: flex-end;
+                                    padding-right: 20px;
+                                  ">
+                      <a href="#" onclick="refreshUniteInfo()" style="
+                                      text-decoration: none;
+                                      background-color: #f37021; 
+                                      color: white;
+                                      padding: 5px 15px;
+                                      border-radius: 5px;
+                                      display: flex;
+                                      align-items: center;
+                                    ">
+                        <i class="fa fa-refresh" style="font-size: 36px; margin-right: 5px"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+              <button type="button" id="btnopenfile" class="button" onclick="openXML();">LOAD PARAM
+                FILE XML</button>
+              <button type="button" id="editparamfile" class="button" onclick="fetchedit_defaultXML();">GENERATE
+                PARAM
+                FILE
+                XML</button>
+              <button type="button" id="sendparamfile" class="button" onclick="send_paramset();">SEND PARAM
+                SETS</button>
+            </div>
+            <div id="table-div"
+              style="width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid black; height: 1202px; overflow: scroll; display: none;">
+              <table id="myTable" style="width: 100%; border-collapse: collapse; display: none;">
+                <thead style="text-align: center; width: 100%;">
+                  <tr>
+                    <th
+                      style="text-align: center; font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px;">
+                      PARAM NUMBER</th>
+                    <th
+                      style="text-align: center; font-family: 'Segoe UI SemiBold'; font-size: 24pt; font-weight: 500; width: 80px; height: 80px;">
+                      VALUE</th>
+                    <!-- Add more headers if needed -->
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  <!-- Rows will be inserted here -->
+                </tbody>
+              </table>
+            </div>
+            <div style="margin-top: 20px;">
+              <textarea id="xmlContent" rows="10" style="width: 100%; display: none;"></textarea>
+            </div>
+          </div>
         </h4>
+
       </article>
     </section>
     <div>

@@ -2912,6 +2912,7 @@ function getDeviceInfo() {
   //alert(deviceInfo);
 }
 function table_update(parsedData) {
+  document.getElementById("table-div").style.display = "block";
   document.getElementById("myTable").style.display = "block";
   var tableBody = document.getElementById("tableBody");
 
@@ -2958,7 +2959,6 @@ async function openXML() {
       xml_loaded = true;
       const xmlString = e.target.result;
       const parsedData = parseXML(xmlString);
-      document.getElementById("next-arrow").style.display = "block";
       table_update(parsedData);
       const firstSet = createUint8Array(parsedData, 0, 60); // First 60 parameters
       const secondSet = createUint8Array(parsedData, 60, 60); // Second 60 parameters
@@ -3028,7 +3028,6 @@ function parseXML(xmlString) {
 
     indexSet.add(index); // Add index to set to track uniqueness
   }
-  saveXML();
   return parsedData;
 }
 
